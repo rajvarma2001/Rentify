@@ -4,13 +4,16 @@ import PropertyList from './PropertyList'
 import PropertyDetails from './PropertyDetails'
 import TenantList from './TenantList'
 import TenantDetails from './TenantDetails'
+import LeaseList from './LeaseList'
+import LeaseDetails from './LeaseDetails'
 import './Dashboard.css'
 
 function Dashboard({ user, onLogout }) {
-  // Navigation tabs state: 'overview' | 'properties' | 'tenants'
+  // Navigation tabs state: 'overview' | 'properties' | 'tenants' | 'leases'
   const [activeSubTab, setActiveSubTab] = useState('overview');
   const [selectedPropertyId, setSelectedPropertyId] = useState(null);
   const [selectedTenantId, setSelectedTenantId] = useState(null);
+  const [selectedLeaseId, setSelectedLeaseId] = useState(null);
 
   // Stats State
   const [stats, setStats] = useState({
@@ -129,23 +132,31 @@ function Dashboard({ user, onLogout }) {
           <div className="dashboard-nav-tabs">
             <button 
               className={`nav-tab-btn ${activeSubTab === 'overview' ? 'active' : ''}`}
-              onClick={() => { setActiveSubTab('overview'); setSelectedPropertyId(null); setSelectedTenantId(null); }}
+              onClick={() => { setActiveSubTab('overview'); setSelectedPropertyId(null); setSelectedTenantId(null); setSelectedLeaseId(null); }}
             >
               📊 Overview
             </button>
             <button 
               className={`nav-tab-btn ${activeSubTab === 'properties' ? 'active' : ''}`}
-              onClick={() => { setActiveSubTab('properties'); setSelectedTenantId(null); }}
+              onClick={() => { setActiveSubTab('properties'); setSelectedTenantId(null); setSelectedLeaseId(null); }}
             >
               🏠 Manage Properties
             </button>
             {user.role === 'landlord' && (
-              <button 
-                className={`nav-tab-btn ${activeSubTab === 'tenants' ? 'active' : ''}`}
-                onClick={() => { setActiveSubTab('tenants'); setSelectedPropertyId(null); }}
-              >
-                👥 Manage Tenants
-              </button>
+              <>
+                <button 
+                  className={`nav-tab-btn ${activeSubTab === 'tenants' ? 'active' : ''}`}
+                  onClick={() => { setActiveSubTab('tenants'); setSelectedPropertyId(null); setSelectedLeaseId(null); }}
+                >
+                  👥 Manage Tenants
+                </button>
+                <button 
+                  className={`nav-tab-btn ${activeSubTab === 'leases' ? 'active' : ''}`}
+                  onClick={() => { setActiveSubTab('leases'); setSelectedPropertyId(null); setSelectedTenantId(null); }}
+                >
+                  📝 Manage Leases
+                </button>
+              </>
             )}
           </div>
 
@@ -336,8 +347,8 @@ function Dashboard({ user, onLogout }) {
                       <button className="action-btn animate-btn" onClick={() => setActiveSubTab('tenants')}>
                         👥 Manage Leased Tenants
                       </button>
-                      <button className="action-btn animate-btn" onClick={fetchStats}>
-                        🔄 Refresh Statistics
+                      <button className="action-btn animate-btn" onClick={() => setActiveSubTab('leases')}>
+                        📝 Manage Rental Leases
                       </button>
                     </>
                   ) : (
@@ -391,6 +402,23 @@ function Dashboard({ user, onLogout }) {
               ) : (
                 <TenantList 
                   onSelectTenant={setSelectedTenantId}
+                />
+              )}
+            </main>
+          )}
+
+          {/* TAB 4: LEASES FLOW PANELS */}
+          {activeSubTab === 'leases' && user.role === 'landlord' && (
+            <main className="dashboard-flow-content">
+              {selectedLeaseId ? (
+                <LeaseDetails 
+                  leaseId={selectedLeaseId}
+                  onBackToList={() => setSelectedLeaseId(null)}
+                />
+              ) : (
+                <LeaseList 
+                  user={user}
+                  onSelectLease={setSelectedLeaseId}
                 />
               )}
             </main>

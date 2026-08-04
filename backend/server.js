@@ -46,15 +46,17 @@ app.get('/api/status', (req, res) => {
 // Auto-Seeding logic to provide interactive mock data
 const seedDatabase = async () => {
   try {
-    const User = require('./models/User');
+        const User = require('./models/User');
     const Property = require('./models/Property');
     const Payment = require('./models/Payment');
     const Maintenance = require('./models/Maintenance');
+    const Lease = require('./models/Lease');
     const bcrypt = require('bcryptjs');
 
-        await Property.deleteMany({});
+    await Property.deleteMany({});
     await Payment.deleteMany({});
     await Maintenance.deleteMany({});
+    await Lease.deleteMany({});
 
     console.log('Seeding initial demo data...');
 
@@ -188,6 +190,18 @@ const seedDatabase = async () => {
       priority: 'high'
     });
     await maint2.save();
+
+        // Seed Lease Agreement
+    const initialLease = new Lease({
+      property: prop1._id,
+      tenant: tenant._id,
+      startDate: prop1.leaseStart,
+      endDate: prop1.leaseEnd,
+      monthlyRent: 1200,
+      terms: 'Standard 12-month lease agreement. Rent due on the 1st of every month. No pets allowed. Non-smoking unit.',
+      status: 'Active'
+    });
+    await initialLease.save();
 
     console.log('🎉 Database seeding completed successfully.');
 

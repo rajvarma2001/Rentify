@@ -1,0 +1,393 @@
+.lease-details-wrapper {
+  width: 100%;
+  max-width: 1000px;
+  margin: 0 auto;
+  opacity: 0;
+  animation: slideUpFade 0.6s cubic-bezier(0.16, 1, 0.3, 1) forwards;
+}
+
+.details-header-row {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+  gap: 1.5rem;
+  margin-bottom: 2.25rem;
+  border-bottom: 1px solid var(--glass-border);
+  padding-bottom: 1.5rem;
+  width: 100%;
+}
+
+.back-list-btn {
+  background: rgba(255, 255, 255, 0.02);
+  color: var(--text-secondary);
+  border: 1px solid var(--glass-border);
+  border-radius: 8px;
+  padding: 0.5rem 1.15rem;
+  font-weight: 600;
+  font-size: 0.85rem;
+  cursor: pointer;
+  transition: all 0.25s;
+}
+
+.back-list-btn:hover {
+  background: rgba(255, 255, 255, 0.05);
+  color: #ffffff;
+  border-color: rgba(255, 255, 255, 0.2);
+  transform: translateX(-3px);
+}
+
+.lease-badge-header {
+  text-align: left;
+  display: flex;
+  align-items: center;
+  gap: 1rem;
+  flex-wrap: wrap;
+}
+
+.status-badge-tag {
+  font-size: 0.65rem;
+  font-weight: 800;
+  letter-spacing: 0.5px;
+  text-transform: uppercase;
+  padding: 0.25rem 0.65rem;
+  border-radius: 12px;
+}
+
+.status-badge-tag.active { background: rgba(56, 176, 0, 0.08); color: #52b788; border: 1px solid rgba(56, 176, 0, 0.2); }
+.status-badge-tag.renewed { background: rgba(162, 89, 255, 0.08); color: #c084fc; border: 1px solid rgba(162, 89, 255, 0.2); }
+.status-badge-tag.pending { background: rgba(255, 159, 67, 0.08); color: #ff9f43; border: 1px solid rgba(255, 159, 67, 0.2); }
+.status-badge-tag.terminated { background: rgba(230, 57, 70, 0.08); color: #ff6b6b; border: 1px solid rgba(230, 57, 70, 0.2); }
+
+.lease-badge-header h2 {
+  font-size: 2.25rem;
+  font-weight: 800;
+  margin: 0;
+  color: #ffffff;
+  letter-spacing: -0.75px;
+}
+
+.property-label {
+  color: var(--text-secondary);
+  font-size: 0.95rem;
+  margin: 0;
+}
+
+/* Details Grid Layout */
+.details-layout-grid {
+  display: grid;
+  grid-template-columns: 2fr 1fr;
+  gap: 2rem;
+  width: 100%;
+  align-items: flex-start;
+}
+
+@media (max-width: 900px) {
+  .details-layout-grid {
+    grid-template-columns: 1fr;
+  }
+}
+
+.details-main-content {
+  display: flex;
+  flex-direction: column;
+  gap: 1.5rem;
+}
+
+/* Tab Cards Content */
+.tab-pane-card {
+  background: var(--glass-bg);
+  backdrop-filter: blur(20px);
+  -webkit-backdrop-filter: blur(20px);
+  border: 1px solid var(--glass-border);
+  border-radius: 22px;
+  padding: 2.25rem;
+  box-shadow: 0 10px 45px rgba(0, 0, 0, 0.4);
+  text-align: left;
+}
+
+.tab-pane-card h3 {
+  font-size: 1.25rem;
+  font-weight: 800;
+  margin-top: 0;
+  margin-bottom: 1.5rem;
+  color: #ffffff;
+  border-bottom: 1px solid var(--glass-border);
+  padding-bottom: 0.75rem;
+}
+
+.empty-tab-text {
+  color: var(--text-secondary);
+  font-size: 0.9rem;
+  padding: 1.5rem 0 0;
+}
+
+/* Timeline progress bar styling */
+.timeline-dates-row {
+  display: flex;
+  justify-content: space-between;
+  margin-bottom: 1rem;
+}
+
+.timeline-dates-row .lbl {
+  font-size: 0.75rem;
+  color: var(--text-secondary);
+  display: block;
+  font-weight: 600;
+  text-transform: uppercase;
+}
+
+.timeline-dates-row .val {
+  font-size: 1rem;
+  color: #ffffff;
+  font-weight: 700;
+}
+
+.text-right {
+  text-align: right;
+}
+
+.progress-bar-container {
+  width: 100%;
+  height: 10px;
+  background: rgba(255, 255, 255, 0.02);
+  border: 1px solid var(--glass-border);
+  border-radius: 6px;
+  overflow: hidden;
+  margin-bottom: 0.75rem;
+}
+
+.progress-fill {
+  height: 100%;
+  background: linear-gradient(90deg, var(--neon-purple), var(--neon-blue));
+  border-radius: 6px;
+  box-shadow: 0 0 10px rgba(0, 180, 216, 0.5);
+  transition: width 0.4s ease-out;
+}
+
+.progress-footer-row {
+  display: flex;
+  justify-content: space-between;
+  font-size: 0.8rem;
+  color: var(--text-secondary);
+  font-weight: 600;
+}
+
+/* Leased property and tenant info sheets */
+.parties-grid {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 1.5rem;
+}
+
+@media (max-width: 600px) {
+  .parties-grid {
+    grid-template-columns: 1fr;
+  }
+}
+
+.party-box {
+  background: rgba(255, 255, 255, 0.01);
+  border: 1px solid var(--glass-border);
+  border-radius: 16px;
+  padding: 1.25rem;
+}
+
+.party-header {
+  display: flex;
+  align-items: center;
+  gap: 0.75rem;
+  margin-bottom: 1rem;
+  border-bottom: 1px solid rgba(255, 255, 255, 0.02);
+  padding-bottom: 0.5rem;
+}
+
+.party-header .icon {
+  font-size: 1.5rem;
+  background: rgba(162, 89, 255, 0.08);
+  padding: 0.35rem;
+  border-radius: 8px;
+}
+
+.party-header h4 {
+  margin: 0;
+  font-size: 1.05rem;
+  color: #ffffff;
+  font-weight: 800;
+}
+
+.party-body {
+  display: flex;
+  flex-direction: column;
+  gap: 0.35rem;
+}
+
+.party-body .title {
+  font-weight: 700;
+  font-size: 0.95rem;
+  color: #ffffff;
+}
+
+.party-body .meta {
+  font-size: 0.8rem;
+  color: var(--text-secondary);
+}
+
+/* Lease terms styling */
+.lease-terms-quote {
+  font-size: 0.9rem;
+  line-height: 1.6;
+  color: var(--text-secondary);
+  background: rgba(255, 255, 255, 0.01);
+  border-left: 3px solid var(--neon-purple);
+  padding: 1rem 1.25rem;
+  margin: 0;
+  border-radius: 0 12px 12px 0;
+}
+
+/* Sidebar layouts */
+.details-sidebar-content {
+  display: flex;
+  flex-direction: column;
+  gap: 1.5rem;
+}
+
+.sidebar-overview-card {
+  background: var(--glass-bg);
+  backdrop-filter: blur(20px);
+  -webkit-backdrop-filter: blur(20px);
+  border: 1px solid var(--glass-border);
+  border-radius: 22px;
+  padding: 2rem;
+  box-shadow: 0 10px 45px rgba(0, 0, 0, 0.4);
+  text-align: left;
+}
+
+.sidebar-overview-card h3 {
+  font-size: 1.15rem;
+  font-weight: 800;
+  color: #ffffff;
+  margin-top: 0;
+  margin-bottom: 1.35rem;
+  border-bottom: 1px solid var(--glass-border);
+  padding-bottom: 0.75rem;
+}
+
+.sidebar-info-row {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 0.85rem;
+  font-size: 0.85rem;
+}
+
+.sidebar-info-row .label {
+  color: var(--text-secondary);
+}
+
+.sidebar-info-row .val {
+  color: #ffffff;
+  font-weight: 700;
+}
+
+.sidebar-info-row .val.status-tag.active { color: #52b788; }
+.sidebar-info-row .val.status-tag.renewed { color: #c084fc; }
+
+/* Documents upload */
+.document-upload-sidebar {
+  display: flex;
+  gap: 0.5rem;
+  margin-bottom: 1.25rem;
+}
+
+.document-upload-sidebar input {
+  flex-grow: 1;
+  background: var(--input-bg);
+  border: 1px solid var(--input-border);
+  border-radius: 8px;
+  padding: 0.5rem 0.75rem;
+  color: #ffffff;
+  font-size: 0.8rem;
+}
+
+.document-upload-sidebar button {
+  background: rgba(255, 255, 255, 0.02);
+  color: #ffffff;
+  border: 1px solid var(--glass-border);
+  border-radius: 8px;
+  padding: 0.5rem 0.85rem;
+  font-size: 0.8rem;
+  font-weight: 700;
+  cursor: pointer;
+  transition: all 0.2s;
+}
+
+.document-upload-sidebar button:hover {
+  background: rgba(255, 255, 255, 0.05);
+}
+
+.empty-sidebar-docs {
+  font-size: 0.8rem;
+  color: var(--text-secondary);
+  text-align: center;
+  padding: 1rem 0 0;
+}
+
+.sidebar-docs-list {
+  display: flex;
+  flex-direction: column;
+  gap: 0.65rem;
+}
+
+.sidebar-doc-row {
+  background: rgba(255, 255, 255, 0.01);
+  border: 1px solid var(--glass-border);
+  border-radius: 10px;
+  padding: 0.65rem 0.85rem;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+
+.doc-name-trunc {
+  font-size: 0.8rem;
+  color: #ffffff;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  max-width: 140px;
+}
+
+.doc-side-actions {
+  display: flex;
+  align-items: center;
+  gap: 0.65rem;
+}
+
+.doc-side-actions a {
+  text-decoration: none;
+  color: var(--neon-blue);
+  font-weight: 700;
+  font-size: 0.9rem;
+}
+
+.doc-side-actions button {
+  background: transparent;
+  color: #ff5252;
+  border: none;
+  font-size: 1rem;
+  font-weight: 600;
+  cursor: pointer;
+  padding: 0;
+}
+
+/* Loading & error styles */
+.details-loading-box,
+.details-error-box {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  padding: 6rem 1rem;
+  gap: 1.25rem;
+  color: var(--text-secondary);
+}
