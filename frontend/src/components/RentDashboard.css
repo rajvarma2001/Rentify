@@ -1,0 +1,386 @@
+.rent-dashboard-wrapper {
+  width: 100%;
+  max-width: 1000px;
+  margin: 0 auto;
+  opacity: 0;
+  animation: slideUpFade 0.6s cubic-bezier(0.16, 1, 0.3, 1) forwards;
+}
+
+.list-header-row {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 2rem;
+  width: 100%;
+}
+
+.list-header-row h2 {
+  font-size: 1.85rem;
+  font-weight: 800;
+  margin: 0;
+  background: linear-gradient(135deg, #ffffff 40%, #9ca3af 100%);
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  letter-spacing: -0.5px;
+}
+
+.add-invoice-header-btn {
+  background: linear-gradient(135deg, var(--neon-purple), #7209b7, var(--neon-purple));
+  background-size: 200% auto;
+  color: #ffffff;
+  border: none;
+  border-radius: 10px;
+  padding: 0.65rem 1.4rem;
+  font-weight: 700;
+  font-size: 0.9rem;
+  cursor: pointer;
+  box-shadow: 0 4px 15px rgba(157, 78, 221, 0.35);
+  transition: all 0.25s cubic-bezier(0.16, 1, 0.3, 1);
+}
+
+.add-invoice-header-btn:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 6px 20px rgba(157, 78, 221, 0.5);
+  background-position: right center;
+}
+
+/* Rent Overview Stats Grid */
+.rent-overview-grid {
+  display: grid;
+  grid-template-columns: repeat(2, 1fr);
+  gap: 1.75rem;
+  margin-bottom: 2.5rem;
+}
+
+@media (max-width: 600px) {
+  .rent-overview-grid {
+    grid-template-columns: 1fr;
+  }
+}
+
+.rent-stat-card {
+  background: var(--glass-bg);
+  backdrop-filter: blur(20px);
+  -webkit-backdrop-filter: blur(20px);
+  border: 1px solid var(--glass-border);
+  border-radius: 22px;
+  padding: 1.75rem 2.25rem;
+  display: flex;
+  align-items: center;
+  gap: 1.5rem;
+  box-shadow: 0 10px 35px rgba(0, 0, 0, 0.4);
+  text-align: left;
+  transition: all 0.35s cubic-bezier(0.16, 1, 0.3, 1);
+}
+
+.rent-stat-card.outstanding {
+  border-color: rgba(255, 159, 67, 0.15);
+}
+.rent-stat-card.outstanding:hover {
+  transform: translateY(-3px);
+  box-shadow: 0 12px 30px rgba(255, 159, 67, 0.15);
+}
+
+.rent-stat-card.collected {
+  border-color: rgba(82, 183, 136, 0.15);
+}
+.rent-stat-card.collected:hover {
+  transform: translateY(-3px);
+  box-shadow: 0 12px 30px rgba(82, 183, 136, 0.15);
+}
+
+.rent-stat-card .icon {
+  font-size: 2.25rem;
+  background: rgba(255, 255, 255, 0.02);
+  padding: 0.65rem;
+  border-radius: 14px;
+}
+
+.rent-stat-card.outstanding .icon {
+  color: #ff9f43;
+  background: rgba(255, 159, 67, 0.08);
+}
+.rent-stat-card.collected .icon {
+  color: #52b788;
+  background: rgba(82, 183, 136, 0.08);
+}
+
+.rent-stat-card .stat-body {
+  display: flex;
+  flex-direction: column;
+  gap: 0.25rem;
+}
+
+.rent-stat-card .val {
+  font-size: 2rem;
+  font-weight: 800;
+  color: #ffffff;
+  letter-spacing: -0.5px;
+}
+
+.rent-stat-card.outstanding .val {
+  color: #ff9f43;
+}
+.rent-stat-card.collected .val {
+  color: #52b788;
+}
+
+.rent-stat-card .lbl {
+  font-size: 0.8rem;
+  color: var(--text-secondary);
+  font-weight: 600;
+}
+
+/* Rent Details Grid Layout */
+.rent-details-layout {
+  display: grid;
+  grid-template-columns: 1.25fr 1fr;
+  gap: 2rem;
+  width: 100%;
+  align-items: flex-start;
+}
+
+@media (max-width: 900px) {
+  .rent-details-layout {
+    grid-template-columns: 1fr;
+  }
+}
+
+.outstanding-bills-section,
+.payment-history-section {
+  background: var(--glass-bg);
+  backdrop-filter: blur(20px);
+  -webkit-backdrop-filter: blur(20px);
+  border: 1px solid var(--glass-border);
+  border-radius: 22px;
+  padding: 2.25rem;
+  box-shadow: 0 10px 45px rgba(0, 0, 0, 0.4);
+  text-align: left;
+}
+
+.outstanding-bills-section h3,
+.payment-history-section h3 {
+  font-size: 1.25rem;
+  font-weight: 800;
+  margin-top: 0;
+  margin-bottom: 0.35rem;
+  color: #ffffff;
+}
+
+.section-desc {
+  color: var(--text-secondary);
+  font-size: 0.8rem;
+  margin-top: 0;
+  margin-bottom: 1.75rem;
+}
+
+.empty-bills-box {
+  background: rgba(255, 255, 255, 0.01);
+  border: 1px dashed var(--glass-border);
+  border-radius: 16px;
+  padding: 3rem 1.5rem;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 1rem;
+  text-align: center;
+}
+
+.empty-bills-box .empty-icon {
+  font-size: 2rem;
+  color: #52b788;
+  background: rgba(82, 183, 136, 0.08);
+  padding: 0.5rem;
+  border-radius: 50%;
+}
+
+.empty-bills-box p {
+  color: var(--text-secondary);
+  font-size: 0.9rem;
+  margin: 0;
+}
+
+/* Outstanding Invoices List */
+.bills-vertical-list {
+  display: flex;
+  flex-direction: column;
+  gap: 0.85rem;
+}
+
+.bill-list-item {
+  background: rgba(255, 255, 255, 0.015);
+  border: 1px solid var(--glass-border);
+  border-radius: 16px;
+  padding: 1.15rem;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  gap: 1.25rem;
+  transition: all 0.3s cubic-bezier(0.16, 1, 0.3, 1);
+}
+
+.bill-list-item:hover {
+  background: rgba(255, 255, 255, 0.03);
+  border-color: rgba(255, 255, 255, 0.12);
+  transform: translateY(-2px);
+}
+
+.bill-main-info {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  flex-grow: 1;
+  cursor: pointer;
+}
+
+.suite-details {
+  display: flex;
+  flex-direction: column;
+  gap: 0.25rem;
+  text-align: left;
+}
+
+.suite-details .suite-name {
+  font-weight: 700;
+  font-size: 0.95rem;
+  color: #ffffff;
+}
+
+.suite-details .due-date {
+  font-size: 0.75rem;
+  color: var(--text-secondary);
+  font-weight: 500;
+}
+
+.bill-amounts {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-end;
+  gap: 0.35rem;
+}
+
+.bill-amounts .amt {
+  font-weight: 800;
+  font-size: 1.1rem;
+  color: #ffffff;
+}
+
+.status-badge-lbl {
+  font-size: 0.65rem;
+  font-weight: 800;
+  text-transform: uppercase;
+  padding: 0.15rem 0.45rem;
+  border-radius: 4px;
+}
+
+.status-badge-lbl.due { background: rgba(255, 159, 67, 0.1); color: #ff9f43; border: 1px solid rgba(255, 159, 67, 0.2); }
+.status-badge-lbl.overdue { background: rgba(230, 57, 70, 0.1); color: #ff6b6b; border: 1px solid rgba(230, 57, 70, 0.2); }
+
+.bill-actions {
+  display: flex;
+  gap: 0.45rem;
+}
+
+.bill-receipt-btn {
+  background: rgba(255, 255, 255, 0.02);
+  border: 1px solid var(--glass-border);
+  color: var(--text-secondary);
+  border-radius: 8px;
+  padding: 0.45rem 0.65rem;
+  font-size: 0.75rem;
+  font-weight: 700;
+  cursor: pointer;
+  transition: all 0.2s;
+}
+
+.bill-receipt-btn:hover {
+  background: rgba(255, 255, 255, 0.05);
+  color: #ffffff;
+}
+
+.bill-collect-btn {
+  background: linear-gradient(135deg, #00b4d8, #0077b6);
+  color: #ffffff;
+  border: none;
+  border-radius: 8px;
+  padding: 0.45rem 0.85rem;
+  font-size: 0.75rem;
+  font-weight: 700;
+  cursor: pointer;
+  transition: all 0.2s;
+  white-space: nowrap;
+}
+
+.bill-collect-btn:hover {
+  transform: translateY(-1px);
+  box-shadow: 0 4px 10px rgba(0, 180, 216, 0.35);
+}
+
+/* History Ledger Styles */
+.payments-history-table {
+  width: 100%;
+  border-collapse: collapse;
+  font-size: 0.85rem;
+}
+
+.payments-history-table th {
+  color: var(--text-secondary);
+  font-weight: 700;
+  border-bottom: 1px solid var(--glass-border);
+  padding: 0.75rem 0.5rem;
+  text-transform: uppercase;
+  font-size: 0.75rem;
+}
+
+.payments-history-table td {
+  padding: 0.85rem 0.5rem;
+  border-bottom: 1px solid rgba(255, 255, 255, 0.02);
+  color: #ffffff;
+}
+
+.payments-history-table tr:hover td {
+  background: rgba(255, 255, 255, 0.015);
+}
+
+.table-prop-name {
+  max-width: 140px;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+.table-amt {
+  color: #52b788;
+}
+
+.table-receipt-btn {
+  background: transparent;
+  color: var(--neon-blue);
+  border: none;
+  font-size: 0.75rem;
+  font-weight: 700;
+  cursor: pointer;
+  padding: 0;
+}
+
+.table-receipt-btn:hover {
+  text-decoration: underline;
+}
+
+.empty-tab-text {
+  color: var(--text-secondary);
+  font-size: 0.85rem;
+  text-align: center;
+  padding: 3rem 0;
+}
+
+@media (max-width: 600px) {
+  .list-header-row {
+    flex-direction: column;
+    align-items: flex-start;
+    gap: 1rem;
+  }
+  .add-invoice-header-btn {
+    width: 100%;
+  }
+}

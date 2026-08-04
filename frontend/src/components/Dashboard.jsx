@@ -6,14 +6,17 @@ import TenantList from './TenantList'
 import TenantDetails from './TenantDetails'
 import LeaseList from './LeaseList'
 import LeaseDetails from './LeaseDetails'
+import RentDashboard from './RentDashboard'
+import PaymentDetails from './PaymentDetails'
 import './Dashboard.css'
 
 function Dashboard({ user, onLogout }) {
-  // Navigation tabs state: 'overview' | 'properties' | 'tenants' | 'leases'
+  // Navigation tabs state: 'overview' | 'properties' | 'tenants' | 'leases' | 'rent'
   const [activeSubTab, setActiveSubTab] = useState('overview');
   const [selectedPropertyId, setSelectedPropertyId] = useState(null);
   const [selectedTenantId, setSelectedTenantId] = useState(null);
   const [selectedLeaseId, setSelectedLeaseId] = useState(null);
+  const [selectedPaymentId, setSelectedPaymentId] = useState(null);
 
   // Stats State
   const [stats, setStats] = useState({
@@ -115,6 +118,11 @@ function Dashboard({ user, onLogout }) {
     setActiveSubTab('properties');
   };
 
+  const handleSelectPaymentDetails = (id) => {
+    setSelectedPaymentId(id);
+    setActiveSubTab('rent');
+  };
+
   return (
     <div className="dashboard-container">
       <div className="glow-orb main-orb"></div>
@@ -132,13 +140,13 @@ function Dashboard({ user, onLogout }) {
           <div className="dashboard-nav-tabs">
             <button 
               className={`nav-tab-btn ${activeSubTab === 'overview' ? 'active' : ''}`}
-              onClick={() => { setActiveSubTab('overview'); setSelectedPropertyId(null); setSelectedTenantId(null); setSelectedLeaseId(null); }}
+              onClick={() => { setActiveSubTab('overview'); setSelectedPropertyId(null); setSelectedTenantId(null); setSelectedLeaseId(null); setSelectedPaymentId(null); }}
             >
               📊 Overview
             </button>
             <button 
               className={`nav-tab-btn ${activeSubTab === 'properties' ? 'active' : ''}`}
-              onClick={() => { setActiveSubTab('properties'); setSelectedTenantId(null); setSelectedLeaseId(null); }}
+              onClick={() => { setActiveSubTab('properties'); setSelectedTenantId(null); setSelectedLeaseId(null); setSelectedPaymentId(null); }}
             >
               🏠 Manage Properties
             </button>
@@ -146,18 +154,24 @@ function Dashboard({ user, onLogout }) {
               <>
                 <button 
                   className={`nav-tab-btn ${activeSubTab === 'tenants' ? 'active' : ''}`}
-                  onClick={() => { setActiveSubTab('tenants'); setSelectedPropertyId(null); setSelectedLeaseId(null); }}
+                  onClick={() => { setActiveSubTab('tenants'); setSelectedPropertyId(null); setSelectedLeaseId(null); setSelectedPaymentId(null); }}
                 >
                   👥 Manage Tenants
                 </button>
                 <button 
                   className={`nav-tab-btn ${activeSubTab === 'leases' ? 'active' : ''}`}
-                  onClick={() => { setActiveSubTab('leases'); setSelectedPropertyId(null); setSelectedTenantId(null); }}
+                  onClick={() => { setActiveSubTab('leases'); setSelectedPropertyId(null); setSelectedTenantId(null); setSelectedPaymentId(null); }}
                 >
                   📝 Manage Leases
                 </button>
               </>
             )}
+            <button 
+              className={`nav-tab-btn ${activeSubTab === 'rent' ? 'active' : ''}`}
+              onClick={() => { setActiveSubTab('rent'); setSelectedPropertyId(null); setSelectedTenantId(null); setSelectedLeaseId(null); setSelectedPaymentId(null); }}
+            >
+              💳 Rent & Payments
+            </button>
           </div>
 
           <div className="user-profile-section">
@@ -229,7 +243,7 @@ function Dashboard({ user, onLogout }) {
                     <div className="dues-list">
                       {stats.dueSummary.items.map(d => (
                         <div className="due-item" key={d._id}>
-                          <div className="due-info">
+                          <div className="due-info" onClick={() => handleSelectPaymentDetails(d._id)}>
                             <span className="due-desc">
                               {user.role === 'landlord' 
                                 ? `Due from ${d.tenant?.name || 'Tenant'}` 
@@ -275,7 +289,11 @@ function Dashboard({ user, onLogout }) {
                         </thead>
                         <tbody>
                           {stats.recentPayments.map(p => (
-                            <tr key={p._id}>
+                            <tr 
+                              key={p._id} 
+                              className="interactive-row" 
+                              onClick={() => handleSelectPaymentDetails(p._id)}
+                            >
                               <td>{p.paidAt ? new Date(p.paidAt).toLocaleDateString() : 'N/A'}</td>
                               <td>{p.property?.name?.substring(0, 18)}...</td>
                               {user.role === 'landlord' && <td>{p.tenant?.name}</td>}
@@ -347,8 +365,8 @@ function Dashboard({ user, onLogout }) {
                       <button className="action-btn animate-btn" onClick={() => setActiveSubTab('tenants')}>
                         👥 Manage Leased Tenants
                       </button>
-                      <button className="action-btn animate-btn" onClick={() => setActiveSubTab('leases')}>
-                        📝 Manage Rental Leases
+                      <button className="action-btn animate-btn" onClick={() => setActiveSubTab('rent')}>
+                        💳 Open Rent Dashboard
                       </button>
                     </>
                   ) : (
@@ -356,12 +374,12 @@ function Dashboard({ user, onLogout }) {
                       <button className="action-btn animate-btn" onClick={() => setShowMaintModal(true)}>
                         🛠️ Submit Maintenance Ticket
                       </button>
+                      <button className="action-btn animate-btn" onClick={() => setActiveSubTab('rent')}>
+                        💳 Open Rent Dashboard
+                      </button>
                       <button className="action-btn animate-btn" onClick={fetchStats}>
                         🔄 Refresh Statistics
                       </button>
-                      <div className="action-info-box">
-                        <p className="action-tip">Tip: Confirm rent invoices under the Billing section.</p>
-                      </div>
                     </>
                   )}
                 </div>
@@ -419,6 +437,27 @@ function Dashboard({ user, onLogout }) {
                 <LeaseList 
                   user={user}
                   onSelectLease={setSelectedLeaseId}
+                />
+              )}
+            </main>
+          )}
+
+          {/* TAB 5: RENT FLOW PANELS */}
+          {activeSubTab === 'rent' && (
+            <main className="dashboard-flow-content">
+              {selectedPaymentId ? (
+                <PaymentDetails 
+                  paymentId={selectedPaymentId}
+                  onBackToDashboard={() => setSelectedPaymentId(null)}
+                />
+              ) : (
+                <RentDashboard 
+                  properties={stats.properties}
+                  dueSummary={stats.dueSummary}
+                  recentPayments={stats.recentPayments}
+                  user={user}
+                  onSelectPayment={setSelectedPaymentId}
+                  onRefresh={fetchStats}
                 />
               )}
             </main>

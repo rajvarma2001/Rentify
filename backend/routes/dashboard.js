@@ -222,6 +222,29 @@ router.post('/maintenance', async (req, res) => {
   }
 });
 
+// GET single Payment Invoice Details
+router.get('/payments/:id', async (req, res) => {
+  try {
+    const paymentId = req.params.id;
+    if (!mongoose.Types.ObjectId.isValid(paymentId)) {
+      return res.status(400).json({ status: 'error', message: 'Invalid Payment ID format' });
+    }
+
+    const payment = await Payment.findById(paymentId)
+      .populate('property', 'name address type description')
+      .populate('tenant', 'name email phone');
+
+    if (!payment) {
+      return res.status(404).json({ status: 'error', message: 'Payment record not found' });
+    }
+
+    res.json({ status: 'success', payment });
+  } catch (err) {
+    console.error('Fetch payment error:', err);
+    res.status(500).json({ status: 'error', message: 'Error retrieving payment details' });
+  }
+});
+
 // Pay Rent (mark status as paid)
 router.post('/payments/:id/pay', async (req, res) => {
   try {
