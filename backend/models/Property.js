@@ -25,6 +25,29 @@ const PropertySchema = new mongoose.Schema({
     ref: 'User',
     required: true
   },
+  description: {
+    type: String,
+    trim: true,
+    default: ''
+  },
+  rooms: [{
+    roomNumber: String,
+    status: {
+      type: String,
+      enum: ['Occupied', 'Vacant'],
+      default: 'Vacant'
+    },
+    size: String
+  }],
+  assignedTenant: {
+    type: mongoose.Schema.Types.ObjectId,
+    ref: 'User'
+  },
+  leaseStart: Date,
+  leaseEnd: Date,
+  documents: [{
+    type: String
+  }],
   createdAt: {
     type: Date,
     default: Date.now

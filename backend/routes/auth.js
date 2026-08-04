@@ -124,4 +124,15 @@ router.post('/forgot-password', async (req, res) => {
   }
 });
 
+// GET List of all Tenants (for property assignment dropdown)
+router.get('/tenants', async (req, res) => {
+  try {
+    const tenants = await User.find({ role: 'tenant' }, 'name email');
+    res.json({ status: 'success', tenants });
+  } catch (err) {
+    console.error('Fetch tenants error:', err);
+    res.status(500).json({ status: 'error', message: 'Error retrieving tenants list' });
+  }
+});
+
 module.exports = router;

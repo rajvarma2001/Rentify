@@ -52,11 +52,9 @@ const seedDatabase = async () => {
     const Maintenance = require('./models/Maintenance');
     const bcrypt = require('bcryptjs');
 
-    const propertyCount = await Property.countDocuments();
-    if (propertyCount > 0) {
-      console.log('Database already has properties. Skipping seed.');
-      return;
-    }
+        await Property.deleteMany({});
+    await Payment.deleteMany({});
+    await Maintenance.deleteMany({});
 
     console.log('Seeding initial demo data...');
 
@@ -94,7 +92,16 @@ const seedDatabase = async () => {
       address: '742 Evergreen Terrace, Springfield',
       rentAmount: 1200,
       type: 'Apartment',
-      landlord: landlord._id
+      landlord: landlord._id,
+      description: 'Beautiful sunny suite with private balcony, hardwood flooring, and recently upgraded kitchen appliances.',
+      rooms: [
+        { roomNumber: '104-A', status: 'Occupied', size: '12x15' },
+        { roomNumber: '104-B', status: 'Vacant', size: '10x12' }
+      ],
+      assignedTenant: tenant._id,
+      leaseStart: new Date('2026-01-01'),
+      leaseEnd: new Date('2026-12-31'),
+      documents: ['lease_agreement_sunset_104.pdf', 'renters_insurance_receipt.pdf']
     });
     await prop1.save();
 
@@ -103,7 +110,13 @@ const seedDatabase = async () => {
       address: '101 Ocean Drive, Malibu',
       rentAmount: 2500,
       type: 'House',
-      landlord: landlord._id
+      landlord: landlord._id,
+      description: 'High-end beachfront villa featuring panoramic ocean views, private patio deck, and pool access.',
+      rooms: [
+        { roomNumber: 'Master-1', status: 'Vacant', size: '20x25' },
+        { roomNumber: 'Guest-2', status: 'Vacant', size: '14x16' }
+      ],
+      documents: ['property_insurance_villa.pdf', 'hoa_guidelines.pdf']
     });
     await prop2.save();
 
@@ -112,7 +125,15 @@ const seedDatabase = async () => {
       address: '500 Innovation Way, San Francisco',
       rentAmount: 1800,
       type: 'Studio',
-      landlord: landlord._id
+      landlord: landlord._id,
+      description: 'Modern industrial style studio loft with high ceilings, exposed brick walls, and central heating.',
+      rooms: [
+        { roomNumber: 'Loft-Main', status: 'Occupied', size: '22x30' }
+      ],
+      assignedTenant: tenant._id,
+      leaseStart: new Date('2026-06-01'),
+      leaseEnd: new Date('2027-05-31'),
+      documents: ['lease_agreement_tech_loft.pdf']
     });
     await prop3.save();
 
