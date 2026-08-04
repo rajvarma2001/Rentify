@@ -301,6 +301,21 @@
   font-weight: 800;
 }
 
+.assign-tenant-form select {
+  background: var(--input-bg);
+  border: 1px solid var(--input-border);
+  border-radius: 10px;
+  padding: 0.8rem 1.1rem;
+  color: #ffffff;
+  font-size: 0.95rem;
+  width: 100%;
+}
+
+.assign-tenant-form select option {
+  background-color: #161b22;
+  color: #ffffff;
+}
+
 .form-row-double {
   display: grid;
   grid-template-columns: 1fr 1fr;

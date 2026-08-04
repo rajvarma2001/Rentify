@@ -274,6 +274,11 @@
   max-width: 320px;
 }
 
+.assign-controls select option {
+  background-color: #161b22;
+  color: #ffffff;
+}
+
 .warning-text {
   margin-top: 0.75rem;
   font-size: 0.8rem;

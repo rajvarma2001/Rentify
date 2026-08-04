@@ -740,6 +740,11 @@
   width: 100%;
 }
 
+.modal-form select option {
+  background-color: #161b22;
+  color: #ffffff;
+}
+
 .modal-form input:focus,
 .modal-form select:focus,
 .modal-form textarea:focus {
