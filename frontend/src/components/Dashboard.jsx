@@ -2,12 +2,15 @@ import { useState, useEffect } from 'react'
 import axios from 'axios'
 import PropertyList from './PropertyList'
 import PropertyDetails from './PropertyDetails'
+import TenantList from './TenantList'
+import TenantDetails from './TenantDetails'
 import './Dashboard.css'
 
 function Dashboard({ user, onLogout }) {
-  // Navigation tabs state: 'overview' | 'properties'
+  // Navigation tabs state: 'overview' | 'properties' | 'tenants'
   const [activeSubTab, setActiveSubTab] = useState('overview');
   const [selectedPropertyId, setSelectedPropertyId] = useState(null);
+  const [selectedTenantId, setSelectedTenantId] = useState(null);
 
   // Stats State
   const [stats, setStats] = useState({
@@ -126,16 +129,24 @@ function Dashboard({ user, onLogout }) {
           <div className="dashboard-nav-tabs">
             <button 
               className={`nav-tab-btn ${activeSubTab === 'overview' ? 'active' : ''}`}
-              onClick={() => { setActiveSubTab('overview'); setSelectedPropertyId(null); }}
+              onClick={() => { setActiveSubTab('overview'); setSelectedPropertyId(null); setSelectedTenantId(null); }}
             >
               📊 Overview
             </button>
             <button 
               className={`nav-tab-btn ${activeSubTab === 'properties' ? 'active' : ''}`}
-              onClick={() => setActiveSubTab('properties')}
+              onClick={() => { setActiveSubTab('properties'); setSelectedTenantId(null); }}
             >
               🏠 Manage Properties
             </button>
+            {user.role === 'landlord' && (
+              <button 
+                className={`nav-tab-btn ${activeSubTab === 'tenants' ? 'active' : ''}`}
+                onClick={() => { setActiveSubTab('tenants'); setSelectedPropertyId(null); }}
+              >
+                👥 Manage Tenants
+              </button>
+            )}
           </div>
 
           <div className="user-profile-section">
@@ -322,12 +333,12 @@ function Dashboard({ user, onLogout }) {
                       <button className="action-btn animate-btn" onClick={() => setActiveSubTab('properties')}>
                         🏢 Manage Properties list
                       </button>
+                      <button className="action-btn animate-btn" onClick={() => setActiveSubTab('tenants')}>
+                        👥 Manage Leased Tenants
+                      </button>
                       <button className="action-btn animate-btn" onClick={fetchStats}>
                         🔄 Refresh Statistics
                       </button>
-                      <div className="action-info-box">
-                        <p className="action-tip">Tip: Double click any property card to view rooms and assigned leases.</p>
-                      </div>
                     </>
                   ) : (
                     <>
@@ -363,6 +374,23 @@ function Dashboard({ user, onLogout }) {
                   user={user}
                   onSelectProperty={setSelectedPropertyId}
                   onRefresh={fetchStats}
+                />
+              )}
+            </main>
+          )}
+
+          {/* TAB 3: TENANTS FLOW PANELS */}
+          {activeSubTab === 'tenants' && user.role === 'landlord' && (
+            <main className="dashboard-flow-content">
+              {selectedTenantId ? (
+                <TenantDetails 
+                  tenantId={selectedTenantId}
+                  user={user}
+                  onBackToList={() => setSelectedTenantId(null)}
+                />
+              ) : (
+                <TenantList 
+                  onSelectTenant={setSelectedTenantId}
                 />
               )}
             </main>

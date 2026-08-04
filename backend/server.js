@@ -81,7 +81,9 @@ const seedDatabase = async () => {
         name: 'Demo Tenant',
         email: 'tenant@example.com',
         password: hashedPassword,
-        role: 'tenant'
+        role: 'tenant',
+        phone: '+1-555-0199',
+        status: 'Active'
       });
       await tenant.save();
     }

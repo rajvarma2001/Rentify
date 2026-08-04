@@ -23,6 +23,15 @@ const UserSchema = new mongoose.Schema({
     enum: ['tenant', 'landlord'],
     default: 'tenant'
   },
+  phone: {
+    type: String,
+    default: ''
+  },
+  status: {
+    type: String,
+    enum: ['Active', 'Suspended'],
+    default: 'Active'
+  },
   createdAt: {
     type: Date,
     default: Date.now
