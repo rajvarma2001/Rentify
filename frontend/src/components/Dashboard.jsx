@@ -3,53 +3,143 @@ import axios from 'axios'
 import './Dashboard.css'
 
 function Dashboard({ user, onLogout }) {
-  const [status, setStatus] = useState({
-    loading: true,
-    backend: 'checking',
-    database: 'checking',
-    error: null
+  // Stats State
+  const [stats, setStats] = useState({
+    properties: [],
+    dueSummary: { count: 0, totalAmount: 0, items: [] },
+    recentPayments: [],
+    maintenanceRequests: [],
+    notifications: []
+  });
+  const [loading, setLoading] = useState(true);
+  const [error, setError] = useState('');
+
+  // Modals state
+  const [showPropModal, setShowPropModal] = useState(false);
+  const [showMaintModal, setShowMaintModal] = useState(false);
+
+  // Forms state
+  const [propForm, setPropForm] = useState({
+    name: '',
+    address: '',
+    rentAmount: '',
+    type: 'Apartment'
+  });
+  const [maintForm, setMaintForm] = useState({
+    title: '',
+    description: '',
+    propertyId: '',
+    priority: 'medium'
   });
 
-  const checkStatus = async () => {
-    setStatus(prev => ({ ...prev, loading: true, error: null }));
+  const [formLoading, setFormLoading] = useState(false);
+  const [formError, setFormError] = useState('');
+
+  // Fetch Dashboard Stats
+  const fetchStats = async () => {
+    setLoading(true);
     try {
-      const response = await axios.get('/api/status');
+      const response = await axios.get(`/api/dashboard/stats?userId=${user.id}&role=${user.role}`);
       if (response.data && response.data.status === 'success') {
-        setStatus({
-          loading: false,
-          backend: 'Online',
-          database: response.data.database,
-          error: null
+        setStats({
+          properties: response.data.properties || [],
+          dueSummary: response.data.dueSummary || { count: 0, totalAmount: 0, items: [] },
+          recentPayments: response.data.recentPayments || [],
+          maintenanceRequests: response.data.maintenanceRequests || [],
+          notifications: response.data.notifications || []
         });
       } else {
-        setStatus({
-          loading: false,
-          backend: 'Online',
-          database: 'Unknown',
-          error: 'Received unexpected response structure from API.'
-        });
+        setError('Failed to fetch dashboard data.');
       }
     } catch (err) {
-      setStatus({
-        loading: false,
-        backend: 'Offline',
-        database: 'Disconnected',
-        error: err.message || 'Could not reach Express backend. Check if the server is running.'
-      });
+      console.error(err);
+      setError('Could not reach backend server. Please verify your connection.');
+    } finally {
+      setLoading(false);
     }
   };
 
   useEffect(() => {
-    checkStatus();
-  }, []);
+    fetchStats();
+  }, [user]);
+
+  // Handle Pay Rent (Tenant Action)
+  const handlePayRent = async (paymentId) => {
+    if (!window.confirm('Confirm rent payment? (This is a simulation)')) return;
+    try {
+      const response = await axios.post(`/api/dashboard/payments/${paymentId}/pay`);
+      if (response.data.status === 'success') {
+        alert('Rent payment processed successfully!');
+        fetchStats();
+      }
+    } catch (err) {
+      console.error(err);
+      alert('Error processing payment.');
+    }
+  };
+
+  // Add Property (Landlord Action)
+  const handleAddPropertySubmit = async (e) => {
+    e.preventDefault();
+    if (!propForm.name || !propForm.address || !propForm.rentAmount) {
+      setFormError('Please fill in all fields.');
+      return;
+    }
+
+    setFormLoading(true);
+    setFormError('');
+    try {
+      const response = await axios.post('/api/dashboard/properties', {
+        ...propForm,
+        landlordId: user.id
+      });
+      if (response.data.status === 'success') {
+        setShowPropModal(false);
+        setPropForm({ name: '', address: '', rentAmount: '', type: 'Apartment' });
+        fetchStats();
+      }
+    } catch (err) {
+      console.error(err);
+      setFormError(err.response?.data?.message || 'Error adding property.');
+    } finally {
+      setFormLoading(false);
+    }
+  };
+
+  // Request Maintenance (Tenant Action)
+  const handleMaintSubmit = async (e) => {
+    e.preventDefault();
+    if (!maintForm.title || !maintForm.description || !maintForm.propertyId) {
+      setFormError('Please fill in all fields.');
+      return;
+    }
+
+    setFormLoading(true);
+    setFormError('');
+    try {
+      const response = await axios.post('/api/dashboard/maintenance', {
+        ...maintForm,
+        tenantId: user.id
+      });
+      if (response.data.status === 'success') {
+        setShowMaintModal(false);
+        setMaintForm({ title: '', description: '', propertyId: '', priority: 'medium' });
+        fetchStats();
+      }
+    } catch (err) {
+      console.error(err);
+      setFormError(err.response?.data?.message || 'Error submitting request.');
+    } finally {
+      setFormLoading(false);
+    }
+  };
 
   return (
     <div className="dashboard-container">
-      {/* Decorative Glow Orbs */}
       <div className="glow-orb main-orb"></div>
       <div className="glow-orb sub-orb"></div>
       
-      {/* Header */}
+      {/* Header Panel */}
       <header className="dashboard-header">
         <div className="header-top">
           <div className="logo-section">
@@ -67,110 +157,351 @@ function Dashboard({ user, onLogout }) {
             </button>
           </div>
         </div>
-        <p className="subtitle">Rent Management System Dashboard</p>
+        <p className="subtitle">Rent Management Workspace</p>
       </header>
 
-      {/* Main Dashboard Cards */}
-      <main className="dashboard-grid">
-        
-        {/* Connection status section */}
-        <section className="dashboard-card status-card">
-          <h2>MERN Connection Status</h2>
+      {error && <div className="error-alert max-width-1000">{error}</div>}
+
+      {loading ? (
+        <div className="dashboard-loading">
+          <div className="loading-spinner"></div>
+          <p>Loading your dashboard details...</p>
+        </div>
+      ) : (
+        <main className="dashboard-layout-grid">
           
-          <div className="status-grid">
-            <div className="status-item">
-              <span className="status-label">Backend (Express + Node.js)</span>
-              <div className={`status-badge ${status.backend.toLowerCase()}`}>
-                <span className="pulse-dot"></span>
-                {status.backend}
+          {/* 1. Property Overview */}
+          <section className="dashboard-card widget-properties">
+            <h2>🏠 Property Overview</h2>
+            <div className="card-content">
+              {stats.properties.length === 0 ? (
+                <p className="empty-text">No registered properties found.</p>
+              ) : (
+                <div className="properties-list">
+                  {stats.properties.map(p => (
+                    <div className="property-item" key={p._id}>
+                      <div className="prop-icon">🏢</div>
+                      <div className="prop-details">
+                        <span className="prop-name">{p.name}</span>
+                        <span className="prop-addr">{p.address}</span>
+                      </div>
+                      <span className="prop-rent">${p.rentAmount}/mo</span>
+                    </div>
+                  ))}
+                </div>
+              )}
+            </div>
+          </section>
+
+          {/* 2. Rent Due Summary */}
+          <section className="dashboard-card widget-rent-due">
+            <h2>💳 Rent Due Summary</h2>
+            <div className="card-content">
+              <div className="dues-summary-box">
+                <span className="summary-amount">${stats.dueSummary.totalAmount}</span>
+                <span className="summary-label">Total Outstanding Dues</span>
               </div>
+              
+              {stats.dueSummary.items.length === 0 ? (
+                <p className="empty-text success-message">✓ All payments are currently up to date.</p>
+              ) : (
+                <div className="dues-list">
+                  {stats.dueSummary.items.map(d => (
+                    <div className="due-item" key={d._id}>
+                      <div className="due-info">
+                        <span className="due-desc">
+                          {user.role === 'landlord' 
+                            ? `Due from ${d.tenant?.name || 'Tenant'}` 
+                            : 'Rent Payment Due'}
+                        </span>
+                        <span className="due-date">Due Date: {new Date(d.dueDate).toLocaleDateString()}</span>
+                      </div>
+                      <div className="due-action-row">
+                        <span className="due-amt">${d.amount}</span>
+                        {user.role === 'tenant' && (
+                          <button 
+                            className="pay-now-btn"
+                            onClick={() => handlePayRent(d._id)}
+                          >
+                            Pay Rent
+                          </button>
+                        )}
+                      </div>
+                    </div>
+                  ))}
+                </div>
+              )}
+            </div>
+          </section>
+
+          {/* 3. Recent Payments */}
+          <section className="dashboard-card widget-payments">
+            <h2>📜 Recent Payments</h2>
+            <div className="card-content">
+              {stats.recentPayments.length === 0 ? (
+                <p className="empty-text">No transaction history found.</p>
+              ) : (
+                <div className="table-responsive">
+                  <table className="payments-table">
+                    <thead>
+                      <tr>
+                        <th>Date</th>
+                        <th>Property</th>
+                        {user.role === 'landlord' && <th>Tenant</th>}
+                        <th>Amount</th>
+                        <th>Status</th>
+                      </tr>
+                    </thead>
+                    <tbody>
+                      {stats.recentPayments.map(p => (
+                        <tr key={p._id}>
+                          <td>{p.paidAt ? new Date(p.paidAt).toLocaleDateString() : 'N/A'}</td>
+                          <td>{p.property?.name?.substring(0, 18)}...</td>
+                          {user.role === 'landlord' && <td>{p.tenant?.name}</td>}
+                          <td>${p.amount}</td>
+                          <td><span className="badge-paid">Paid</span></td>
+                        </tr>
+                      ))}
+                    </tbody>
+                  </table>
+                </div>
+              )}
+            </div>
+          </section>
+
+          {/* 4. Maintenance Requests */}
+          <section className="dashboard-card widget-maintenance">
+            <h2>🛠️ Maintenance Requests</h2>
+            <div className="card-content">
+              {stats.maintenanceRequests.length === 0 ? (
+                <p className="empty-text">No active maintenance requests.</p>
+              ) : (
+                <div className="maintenance-list">
+                  {stats.maintenanceRequests.map(r => (
+                    <div className="maintenance-item" key={r._id}>
+                      <div className="maint-header">
+                        <span className="maint-title">{r.title}</span>
+                        <span className={`priority-tag ${r.priority.toLowerCase()}`}>
+                          {r.priority}
+                        </span>
+                      </div>
+                      <p className="maint-desc">{r.description}</p>
+                      <div className="maint-footer">
+                        <span className="maint-prop">📍 {r.property?.name}</span>
+                        <span className={`status-tag ${r.status.replace('-', '')}`}>
+                          {r.status}
+                        </span>
+                      </div>
+                    </div>
+                  ))}
+                </div>
+              )}
+            </div>
+          </section>
+
+          {/* 5. Notifications */}
+          <section className="dashboard-card widget-notifications">
+            <h2>🔔 Recent Notifications</h2>
+            <div className="card-content">
+              <div className="notifications-list">
+                {stats.notifications.map(n => (
+                  <div className={`notification-item ${n.type}`} key={n.id}>
+                    <p className="notif-text">{n.text}</p>
+                    <span className="notif-time">{n.time}</span>
+                  </div>
+                ))}
+              </div>
+            </div>
+          </section>
+
+          {/* 6. Quick Actions */}
+          <section className="dashboard-card widget-actions">
+            <h2>⚡ Quick Actions</h2>
+            <div className="card-content actions-grid">
+              {user.role === 'landlord' ? (
+                <>
+                  <button className="action-btn animate-btn" onClick={() => setShowPropModal(true)}>
+                    ➕ Register New Property
+                  </button>
+                  <button className="action-btn animate-btn" onClick={fetchStats}>
+                    🔄 Refresh Statistics
+                  </button>
+                  <div className="action-info-box">
+                    <p className="action-tip">Tip: Registering properties automatically sets up default templates for listing.</p>
+                  </div>
+                </>
+              ) : (
+                <>
+                  <button className="action-btn animate-btn" onClick={() => setShowMaintModal(true)}>
+                    🛠️ Submit Maintenance Ticket
+                  </button>
+                  <button className="action-btn animate-btn" onClick={fetchStats}>
+                    🔄 Refresh Statistics
+                  </button>
+                  <div className="action-info-box">
+                    <p className="action-tip">Tip: Ensure to check back on tickets for landlord updates.</p>
+                  </div>
+                </>
+              )}
+            </div>
+          </section>
+
+        </main>
+      )}
+
+      {/* FOOTER */}
+      <footer className="dashboard-footer">
+        <p>Rentify Rent Management System • Connected to MongoDB</p>
+      </footer>
+
+
+      {/* ----------------------------------------------------
+         MODALS FOR QUICK ACTIONS
+      ---------------------------------------------------- */}
+      
+      {/* Property Modal */}
+      {showPropModal && (
+        <div className="modal-backdrop">
+          <div className="modal-card">
+            <div className="modal-header">
+              <h3>Register New Property</h3>
+              <button className="close-modal-btn" onClick={() => setShowPropModal(false)}>×</button>
             </div>
             
-            <div className="status-item">
-              <span className="status-label">Database (MongoDB + Mongoose)</span>
-              <div className={`status-badge ${status.database.toLowerCase()}`}>
-                <span className="pulse-dot"></span>
-                {status.database}
+            {formError && <div className="error-alert">{formError}</div>}
+            
+            <form onSubmit={handleAddPropertySubmit} className="modal-form">
+              <div className="form-group">
+                <label>Property Name</label>
+                <input
+                  type="text"
+                  placeholder="Sunset Apartments - Suite 4B"
+                  value={propForm.name}
+                  onChange={(e) => setPropForm({ ...propForm, name: e.target.value })}
+                  disabled={formLoading}
+                  required
+                />
               </div>
-            </div>
+
+              <div className="form-group">
+                <label>Address</label>
+                <input
+                  type="text"
+                  placeholder="123 Main St, Springfield"
+                  value={propForm.address}
+                  onChange={(e) => setPropForm({ ...propForm, address: e.target.value })}
+                  disabled={formLoading}
+                  required
+                />
+              </div>
+
+              <div className="form-group">
+                <label>Monthly Rent ($)</label>
+                <input
+                  type="number"
+                  placeholder="1200"
+                  value={propForm.rentAmount}
+                  onChange={(e) => setPropForm({ ...propForm, rentAmount: e.target.value })}
+                  disabled={formLoading}
+                  required
+                />
+              </div>
+
+              <div className="form-group">
+                <label>Property Type</label>
+                <select
+                  value={propForm.type}
+                  onChange={(e) => setPropForm({ ...propForm, type: e.target.value })}
+                  disabled={formLoading}
+                >
+                  <option value="Apartment">Apartment</option>
+                  <option value="House">House</option>
+                  <option value="Studio">Studio</option>
+                  <option value="Office">Office</option>
+                </select>
+              </div>
+
+              <button type="submit" className="auth-btn" disabled={formLoading}>
+                {formLoading ? 'Registering...' : 'Register Property'}
+              </button>
+            </form>
           </div>
+        </div>
+      )}
 
-          {status.error && (
-            <div className="error-alert">
-              <strong>Error:</strong> {status.error}
+
+      {/* Maintenance Request Modal */}
+      {showMaintModal && (
+        <div className="modal-backdrop">
+          <div className="modal-card">
+            <div className="modal-header">
+              <h3>Submit Maintenance Ticket</h3>
+              <button className="close-modal-btn" onClick={() => setShowMaintModal(false)}>×</button>
             </div>
-          )}
+            
+            {formError && <div className="error-alert">{formError}</div>}
+            
+            <form onSubmit={handleMaintSubmit} className="modal-form">
+              <div className="form-group">
+                <label>Select Property</label>
+                <select
+                  value={maintForm.propertyId}
+                  onChange={(e) => setMaintForm({ ...maintForm, propertyId: e.target.value })}
+                  disabled={formLoading}
+                  required
+                >
+                  <option value="">-- Choose Rented Unit --</option>
+                  {stats.properties.map(p => (
+                    <option key={p._id} value={p._id}>{p.name}</option>
+                  ))}
+                </select>
+              </div>
 
-          <button 
-            type="button" 
-            className="refresh-btn" 
-            onClick={checkStatus} 
-            disabled={status.loading}
-          >
-            {status.loading ? 'Checking Status...' : 'Check Server Connection'}
-          </button>
-        </section>
+              <div className="form-group">
+                <label>Ticket Title</label>
+                <input
+                  type="text"
+                  placeholder="Sink clog / Light fixture broken"
+                  value={maintForm.title}
+                  onChange={(e) => setMaintForm({ ...maintForm, title: e.target.value })}
+                  disabled={formLoading}
+                  required
+                />
+              </div>
 
-        {/* Demo Overview section based on role */}
-        {user?.role === 'landlord' ? (
-          <section className="dashboard-card stats-card">
-            <h2>Landlord Overview</h2>
-            <div className="stats-grid">
-              <div className="stat-box">
-                <span className="stat-val">15</span>
-                <span className="stat-lbl">Total Properties</span>
+              <div className="form-group">
+                <label>Description</label>
+                <textarea
+                  rows="3"
+                  placeholder="Detail the issue..."
+                  value={maintForm.description}
+                  onChange={(e) => setMaintForm({ ...maintForm, description: e.target.value })}
+                  disabled={formLoading}
+                  required
+                ></textarea>
               </div>
-              <div className="stat-box">
-                <span className="stat-val">8</span>
-                <span className="stat-lbl">Active Tenants</span>
-              </div>
-              <div className="stat-box">
-                <span className="stat-val">$8,450</span>
-                <span className="stat-lbl">Expected Revenue</span>
-              </div>
-            </div>
-          </section>
-        ) : (
-          <section className="dashboard-card stats-card">
-            <h2>Tenant Overview</h2>
-            <div className="stats-grid">
-              <div className="stat-box">
-                <span className="stat-val">Active</span>
-                <span className="stat-lbl">Lease Status</span>
-              </div>
-              <div className="stat-box">
-                <span className="stat-val">$1,200</span>
-                <span className="stat-lbl">Monthly Rent Due</span>
-              </div>
-              <div className="stat-box">
-                <span className="stat-val">Aug 10</span>
-                <span className="stat-lbl">Next Payment Date</span>
-              </div>
-            </div>
-          </section>
-        )}
 
-        {/* Architectural Guide section */}
-        <section className="dashboard-card guide-card">
-          <h2>Architecture Details</h2>
-          <p className="guide-text">
-            Logged in as <code>{user?.email}</code>. Authentication state is stored securely in your browser's session memory. API calls to MongoDB are checked dynamically using Mongoose.
-          </p>
-          <div className="tech-stack-row">
-            <span className="tech-tag mongodb">MongoDB</span>
-            <span className="tech-tag express">Express</span>
-            <span className="tech-tag react">React</span>
-            <span className="tech-tag node">Node</span>
-            <span className="tech-tag mongoose">Mongoose</span>
+              <div className="form-group">
+                <label>Priority</label>
+                <select
+                  value={maintForm.priority}
+                  onChange={(e) => setMaintForm({ ...maintForm, priority: e.target.value })}
+                  disabled={formLoading}
+                >
+                  <option value="low">Low</option>
+                  <option value="medium">Medium</option>
+                  <option value="high">High</option>
+                </select>
+              </div>
+
+              <button type="submit" className="auth-btn" disabled={formLoading}>
+                {formLoading ? 'Submitting...' : 'Submit Ticket'}
+              </button>
+            </form>
           </div>
-        </section>
+        </div>
+      )}
 
-      </main>
-
-      {/* Footer */}
-      <footer className="dashboard-footer">
-        <p>Rentify Rent Management System • Ready for development</p>
-      </footer>
     </div>
   )
 }
