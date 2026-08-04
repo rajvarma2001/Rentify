@@ -1,5 +1,6 @@
 import { useState, useEffect } from 'react'
 import axios from 'axios'
+import './Dashboard.css'
 
 function Dashboard({ user, onLogout }) {
   const [status, setStatus] = useState({

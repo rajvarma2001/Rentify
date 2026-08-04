@@ -1,5 +1,6 @@
 import { useState } from 'react'
 import axios from 'axios'
+import './Auth.css'
 
 function Login({ onNavigate, onLogin }) {
   const [formData, setFormData] = useState({

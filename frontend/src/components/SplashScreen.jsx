@@ -1,4 +1,5 @@
 import { useEffect } from 'react'
+import './SplashScreen.css'
 
 function SplashScreen({ onFinish }) {
   useEffect(() => {
