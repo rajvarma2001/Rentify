@@ -16,7 +16,11 @@ mongoose.connect(mongoUri)
   .then(() => console.log('Successfully connected to MongoDB.'))
   .catch((err) => console.error('MongoDB connection error:', err));
 
+const authRoutes = require('./routes/auth');
+
 // API Routes
+app.use('/api/auth', authRoutes);
+
 app.get('/api/status', (req, res) => {
   const dbState = mongoose.connection.readyState;
   const statusMap = {
