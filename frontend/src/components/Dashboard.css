@@ -601,7 +601,12 @@
   border: 3px solid rgba(255, 255, 255, 0.05);
   border-top-color: var(--neon-purple);
   border-radius: 50%;
-  animation: pulseLoader 1s infinite linear;
+  animation: spin 1.0s infinite linear;
+}
+
+@keyframes spin {
+  0% { transform: rotate(0deg); }
+  100% { transform: rotate(360deg); }
 }
 
 
@@ -669,6 +674,21 @@
   gap: 1.25rem;
 }
 
+.modal-form .form-group {
+  display: flex;
+  flex-direction: column;
+  gap: 0.55rem;
+  text-align: left;
+}
+
+.modal-form .form-group label {
+  font-size: 0.85rem;
+  font-weight: 600;
+  color: #ffffff;
+  letter-spacing: 0.25px;
+}
+
+.modal-form input,
 .modal-form select,
 .modal-form textarea {
   background: var(--input-bg);
@@ -679,8 +699,10 @@
   font-size: 0.95rem;
   font-family: inherit;
   transition: all 0.3s cubic-bezier(0.16, 1, 0.3, 1);
+  width: 100%;
 }
 
+.modal-form input:focus,
 .modal-form select:focus,
 .modal-form textarea:focus {
   outline: none;
@@ -688,3 +710,31 @@
   box-shadow: 0 0 0 3px rgba(157, 78, 221, 0.2);
   background: rgba(255, 255, 255, 0.04);
 }
+
+.modal-form .auth-btn {
+  background: linear-gradient(135deg, var(--neon-purple), #7209b7, var(--neon-purple));
+  background-size: 200% auto;
+  color: #ffffff;
+  border: none;
+  border-radius: 10px;
+  padding: 0.9rem;
+  font-weight: 700;
+  font-size: 0.95rem;
+  cursor: pointer;
+  transition: all 0.3s cubic-bezier(0.16, 1, 0.3, 1);
+  box-shadow: 0 4px 15px rgba(157, 78, 221, 0.35);
+  margin-top: 0.6rem;
+  width: 100%;
+  text-align: center;
+}
+
+.modal-form .auth-btn:hover:not(:disabled) {
+  transform: translateY(-2px);
+  box-shadow: 0 6px 20px rgba(157, 78, 221, 0.5);
+  background-position: right center;
+}
+
+.modal-form .auth-btn:active:not(:disabled) {
+  transform: translateY(0);
+}
+
