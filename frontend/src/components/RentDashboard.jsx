@@ -3,6 +3,8 @@ import axios from 'axios'
 import './RentDashboard.css'
 
 function RentDashboard({ properties, dueSummary, recentPayments, user, onSelectPayment, onRefresh }) {
+  // Sub-tabs state: 'all' | 'pending' | 'completed'
+  const [activeSubSubTab, setActiveSubSubTab] = useState('all');
   const [showInvoiceModal, setShowInvoiceModal] = useState(false);
   const [form, setForm] = useState({
     propertyId: '',
@@ -14,14 +16,13 @@ function RentDashboard({ properties, dueSummary, recentPayments, user, onSelectP
   const [formLoading, setFormLoading] = useState(false);
   const [formError, setFormError] = useState('');
 
-  // Handle Property Select inside Invoice Modal
-  // Auto-detects leased tenant to prevent billing vacant suites
+  // Handle Property Change in Modal
   const handlePropertyChange = (propertyId) => {
     const selectedProp = properties.find(p => p._id === propertyId);
     setForm(prev => ({
       ...prev,
       propertyId,
-      tenantId: selectedProp?.assignedTenant?._id || selectedProp?.assignedTenant || '' // checks populated or ref
+      tenantId: selectedProp?.assignedTenant?._id || selectedProp?.assignedTenant || ''
     }));
   };
 
@@ -66,7 +67,7 @@ function RentDashboard({ properties, dueSummary, recentPayments, user, onSelectP
     }
   };
 
-  // Mark invoice as Paid (Pay Rent / Collect Rent)
+  // Process/Mark Payment status as paid
   const handleProcessPayment = async (paymentId) => {
     const confirmMsg = user.role === 'landlord'
       ? 'Mark this outstanding invoice as Collected/Paid?'
@@ -104,12 +105,28 @@ function RentDashboard({ properties, dueSummary, recentPayments, user, onSelectP
     return !selectedProp?.assignedTenant;
   };
 
+  // Combine Outstanding Invoices and Paid invoices (no overlap due to status)
+  const combinedPayments = [...dueSummary.items, ...recentPayments].sort((a, b) => {
+    // Sort by due date (descending)
+    return new Date(b.dueDate) - new Date(a.dueDate);
+  });
+
+  // Filter combined list depending on sub-tab
+  const filteredPayments = combinedPayments.filter(p => {
+    if (activeSubSubTab === 'pending') {
+      return p.status === 'due' || p.status === 'overdue';
+    } else if (activeSubSubTab === 'completed') {
+      return p.status === 'paid';
+    }
+    return true; // 'all'
+  });
+
   return (
     <div className="rent-dashboard-wrapper">
       
       {/* Header Panel */}
       <div className="list-header-row">
-        <h2>💳 Rent & Payments Workspace</h2>
+        <h2>💳 Rent & Payments</h2>
         {user.role === 'landlord' && (
           <button className="add-invoice-header-btn" onClick={handleOpenInvoice}>
             ➕ Generate Invoice
@@ -136,99 +153,81 @@ function RentDashboard({ properties, dueSummary, recentPayments, user, onSelectP
         </div>
       </div>
 
-      <div className="rent-details-layout">
-        
-        {/* Outstanding Dues Section */}
-        <section className="outstanding-bills-section">
-          <h3>📂 Outstanding Invoices ({dueSummary.items.length})</h3>
-          <p className="section-desc">Unpaid statements awaiting collection or settlement.</p>
-          
-          {dueSummary.items.length === 0 ? (
-            <div className="empty-bills-box">
-              <span className="empty-icon">✓</span>
-              <p>All statements are fully settled!</p>
-            </div>
-          ) : (
-            <div className="bills-vertical-list">
-              {dueSummary.items.map(b => (
-                <div className="bill-list-item" key={b._id}>
-                  <div className="bill-main-info" onClick={() => onSelectPayment(b._id)}>
-                    <div className="suite-details">
-                      <span className="suite-name">{b.property?.name}</span>
-                      <span className="due-date">Due: {new Date(b.dueDate).toLocaleDateString()}</span>
-                    </div>
-                    <div className="bill-amounts">
-                      <span className="amt">${b.amount}</span>
-                      <span className={`status-badge-lbl ${b.status.toLowerCase()}`}>
-                        {b.status}
-                      </span>
-                    </div>
-                  </div>
-
-                  <div className="bill-actions">
-                    <button 
-                      className="bill-receipt-btn"
-                      onClick={() => onSelectPayment(b._id)}
-                    >
-                      Receipt
-                    </button>
-                    <button 
-                      className="bill-collect-btn"
-                      onClick={() => handleProcessPayment(b._id)}
-                    >
-                      {user.role === 'landlord' ? 'Collect Rent' : 'Pay Rent'}
-                    </button>
-                  </div>
-                </div>
-              ))}
-            </div>
-          )}
-        </section>
-
-        {/* Recent Transactions / Payment History */}
-        <section className="payment-history-section">
-          <h3>📜 Transaction History ({recentPayments.length})</h3>
-          <p className="section-desc">Receipts ledger showing paid statements.</p>
-
-          {recentPayments.length === 0 ? (
-            <p className="empty-tab-text">No payment records found.</p>
-          ) : (
-            <div className="table-responsive">
-              <table className="payments-history-table">
-                <thead>
-                  <tr>
-                    <th>Date Paid</th>
-                    <th>Property</th>
-                    <th>Amount</th>
-                    <th>Receipt</th>
-                  </tr>
-                </thead>
-                <tbody>
-                  {recentPayments.map(p => (
-                    <tr key={p._id}>
-                      <td>{p.paidAt ? new Date(p.paidAt).toLocaleDateString() : 'N/A'}</td>
-                      <td className="table-prop-name" title={p.property?.name}>
-                        {p.property?.name?.substring(0, 24)}...
-                      </td>
-                      <td className="table-amt font-bold">${p.amount}</td>
-                      <td>
-                        <button 
-                          className="table-receipt-btn"
-                          onClick={() => onSelectPayment(p._id)}
-                        >
-                          View Receipt
-                        </button>
-                      </td>
-                    </tr>
-                  ))}
-                </tbody>
-              </table>
-            </div>
-          )}
-        </section>
-
+      {/* SUB-TABS NAVIGATION */}
+      <div className="rent-tabs-bar">
+        <button 
+          className={`rent-tab-btn ${activeSubSubTab === 'all' ? 'active' : ''}`}
+          onClick={() => setActiveSubSubTab('all')}
+        >
+          All Payments ({combinedPayments.length})
+        </button>
+        <button 
+          className={`rent-tab-btn ${activeSubSubTab === 'pending' ? 'active' : ''}`}
+          onClick={() => setActiveSubSubTab('pending')}
+        >
+          Pending ({dueSummary.items.length})
+        </button>
+        <button 
+          className={`rent-tab-btn ${activeSubSubTab === 'completed' ? 'active' : ''}`}
+          onClick={() => setActiveSubSubTab('completed')}
+        >
+          Completed ({recentPayments.length})
+        </button>
       </div>
 
+      {/* List Layout of Invoices */}
+      <div className="payments-vertical-layout">
+        {filteredPayments.length === 0 ? (
+          <div className="empty-payments-box">
+            <span className="empty-icon">💳</span>
+            <p>No transactions found for this selection.</p>
+          </div>
+        ) : (
+          filteredPayments.map(p => (
+            <div className={`payment-row-card ${p.status}`} key={p._id}>
+              {/* Left Column: Status Badge */}
+              <div className="payment-card-header">
+                <span className={`status-badge-lbl ${p.status.toLowerCase()}`}>
+                  {p.status === 'paid' ? 'Settled ✓' : p.status}
+                </span>
+                <span className="payment-amount-val">${p.amount}</span>
+              </div>
+
+              {/* Center Column: Detailed descriptor info */}
+              <div className="payment-card-body">
+                <div className="payment-details-info">
+                  <h3 className="payment-property-lbl">🏢 {p.property?.name || 'Unknown Property'}</h3>
+                  <p className="payment-tenant-lbl">👤 Tenant: {p.tenant?.name || 'Unassigned tenant'}</p>
+                </div>
+                <div className="payment-details-meta">
+                  <p className="meta-text">📅 Due: {new Date(p.dueDate).toLocaleDateString()}</p>
+                  {p.paidAt && (
+                    <p className="meta-text paid-at-text">✓ Paid: {new Date(p.paidAt).toLocaleDateString()}</p>
+                  )}
+                </div>
+              </div>
+
+              {/* Right Column: Standardized vertical action buttons */}
+              <div className="payment-card-actions">
+                <button 
+                  className="action-view-btn" 
+                  onClick={() => onSelectPayment(p._id)}
+                >
+                  View Receipt
+                </button>
+                {p.status !== 'paid' && (
+                  <button 
+                    className="action-collect-btn" 
+                    onClick={() => handleProcessPayment(p._id)}
+                  >
+                    {user.role === 'landlord' ? 'Collect Rent' : 'Pay Rent'}
+                  </button>
+                )}
+              </div>
+            </div>
+          ))
+        )}
+      </div>
 
       {/* ----------------------------------------------------
          MODAL: GENERATE INVOICE
