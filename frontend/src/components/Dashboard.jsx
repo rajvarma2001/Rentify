@@ -12,6 +12,7 @@ import ExpenseList from './ExpenseList'
 import ExpenseDetails from './ExpenseDetails'
 import MaintenanceList from './MaintenanceList'
 import MaintenanceDetails from './MaintenanceDetails'
+import ReportDashboard from './ReportDashboard'
 import './Dashboard.css'
 
 function Dashboard({ user, onLogout }) {
@@ -193,6 +194,12 @@ function Dashboard({ user, onLogout }) {
                   onClick={() => { setActiveSubTab('expenses'); setSelectedPropertyId(null); setSelectedTenantId(null); setSelectedLeaseId(null); setSelectedPaymentId(null); setSelectedExpenseId(null); setSelectedRequestId(null); setIsMobileNavOpen(false); }}
                 >
                   💸 Expenses
+                </button>
+                <button 
+                  className={`nav-tab-btn ${activeSubTab === 'reports' ? 'active' : ''}`}
+                  onClick={() => { setActiveSubTab('reports'); setSelectedPropertyId(null); setSelectedTenantId(null); setSelectedLeaseId(null); setSelectedPaymentId(null); setSelectedExpenseId(null); setSelectedRequestId(null); setIsMobileNavOpen(false); }}
+                >
+                  📊 Reports
                 </button>
               </>
             )}
@@ -418,6 +425,9 @@ function Dashboard({ user, onLogout }) {
                       <button className="action-btn animate-btn" onClick={() => setActiveSubTab('maintenance')}>
                         🛠️ Maintenance Requests
                       </button>
+                      <button className="action-btn animate-btn" onClick={() => setActiveSubTab('reports')}>
+                        📊 Intelligence Reports
+                      </button>
                     </>
                   ) : (
                     <>
@@ -548,6 +558,13 @@ function Dashboard({ user, onLogout }) {
                   onSelectRequest={setSelectedRequestId}
                 />
               )}
+            </main>
+          )}
+
+          {/* TAB 8: INTELLIGENCE REPORTS PANELS */}
+          {activeSubTab === 'reports' && user.role === 'landlord' && (
+            <main className="dashboard-flow-content workspace-tab-panel">
+              <ReportDashboard user={user} />
             </main>
           )}
         </>
