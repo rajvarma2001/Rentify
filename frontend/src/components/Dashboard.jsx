@@ -13,6 +13,7 @@ import './Dashboard.css'
 function Dashboard({ user, onLogout }) {
   // Navigation tabs state: 'overview' | 'properties' | 'tenants' | 'leases' | 'rent'
   const [activeSubTab, setActiveSubTab] = useState('overview');
+  const [isMobileNavOpen, setIsMobileNavOpen] = useState(false);
   const [selectedPropertyId, setSelectedPropertyId] = useState(null);
   const [selectedTenantId, setSelectedTenantId] = useState(null);
   const [selectedLeaseId, setSelectedLeaseId] = useState(null);
@@ -128,78 +129,103 @@ function Dashboard({ user, onLogout }) {
       <div className="glow-orb main-orb"></div>
       <div className="glow-orb sub-orb"></div>
       
-      {/* Header Panel */}
-      <header className="dashboard-header">
-        <div className="header-top">
-          <div className="logo-section">
-            <span className="logo-icon" role="img" aria-label="keys">🔑</span>
-            <h1>Rentify</h1>
+      {/* Backdrop overlay for mobile menu */}
+      {isMobileNavOpen && (
+        <div className="mobile-nav-overlay" onClick={() => setIsMobileNavOpen(false)}></div>
+      )}
+
+      <div className="dashboard-workspace">
+        {/* Left Sidebar Navigation */}
+        <aside className={`dashboard-sidebar-left ${isMobileNavOpen ? 'mobile-open' : ''}`}>
+          <div className="sidebar-header">
+            <div className="logo-section">
+              <span className="logo-icon" role="img" aria-label="keys">🔑</span>
+              <h1>Rentify</h1>
+            </div>
+            <button className="close-mobile-nav" onClick={() => setIsMobileNavOpen(false)}>×</button>
           </div>
 
-          {/* Navigation Links inside header */}
-          <div className="dashboard-nav-tabs">
+          <div className="sidebar-profile">
+            <div className="user-avatar">
+              {user?.name ? user.name[0].toUpperCase() : 'U'}
+            </div>
+            <div className="user-details">
+              <span className="user-name">{user?.name}</span>
+              <span className="user-role-badge">{user?.role}</span>
+            </div>
+          </div>
+
+          <nav className="sidebar-nav-tabs">
             <button 
               className={`nav-tab-btn ${activeSubTab === 'overview' ? 'active' : ''}`}
-              onClick={() => { setActiveSubTab('overview'); setSelectedPropertyId(null); setSelectedTenantId(null); setSelectedLeaseId(null); setSelectedPaymentId(null); }}
+              onClick={() => { setActiveSubTab('overview'); setSelectedPropertyId(null); setSelectedTenantId(null); setSelectedLeaseId(null); setSelectedPaymentId(null); setIsMobileNavOpen(false); }}
             >
               📊 Overview
             </button>
             <button 
               className={`nav-tab-btn ${activeSubTab === 'properties' ? 'active' : ''}`}
-              onClick={() => { setActiveSubTab('properties'); setSelectedTenantId(null); setSelectedLeaseId(null); setSelectedPaymentId(null); }}
+              onClick={() => { setActiveSubTab('properties'); setSelectedTenantId(null); setSelectedLeaseId(null); setSelectedPaymentId(null); setIsMobileNavOpen(false); }}
             >
-              🏠 Manage Properties
+              🏠 Properties
             </button>
             {user.role === 'landlord' && (
               <>
                 <button 
                   className={`nav-tab-btn ${activeSubTab === 'tenants' ? 'active' : ''}`}
-                  onClick={() => { setActiveSubTab('tenants'); setSelectedPropertyId(null); setSelectedLeaseId(null); setSelectedPaymentId(null); }}
+                  onClick={() => { setActiveSubTab('tenants'); setSelectedPropertyId(null); setSelectedLeaseId(null); setSelectedPaymentId(null); setIsMobileNavOpen(false); }}
                 >
-                  👥 Manage Tenants
+                  👥 Tenants
                 </button>
                 <button 
                   className={`nav-tab-btn ${activeSubTab === 'leases' ? 'active' : ''}`}
-                  onClick={() => { setActiveSubTab('leases'); setSelectedPropertyId(null); setSelectedTenantId(null); setSelectedPaymentId(null); }}
+                  onClick={() => { setActiveSubTab('leases'); setSelectedPropertyId(null); setSelectedTenantId(null); setSelectedPaymentId(null); setIsMobileNavOpen(false); }}
                 >
-                  📝 Manage Leases
+                  📝 Leases
                 </button>
               </>
             )}
             <button 
               className={`nav-tab-btn ${activeSubTab === 'rent' ? 'active' : ''}`}
-              onClick={() => { setActiveSubTab('rent'); setSelectedPropertyId(null); setSelectedTenantId(null); setSelectedLeaseId(null); setSelectedPaymentId(null); }}
+              onClick={() => { setActiveSubTab('rent'); setSelectedPropertyId(null); setSelectedTenantId(null); setSelectedLeaseId(null); setSelectedPaymentId(null); setIsMobileNavOpen(false); }}
             >
               💳 Rent & Payments
             </button>
-          </div>
+          </nav>
 
-          <div className="user-profile-section">
-            <div className="user-details">
-              <span className="user-welcome">Welcome back,</span>
-              <span className="user-name">{user?.name}</span>
-              <span className="user-role-badge">{user?.role}</span>
-            </div>
+          <div className="sidebar-footer">
             <button className="logout-btn" onClick={onLogout}>
               Logout
             </button>
           </div>
-        </div>
-        <p className="subtitle">Rent Management Workspace</p>
-      </header>
+        </aside>
 
-      {error && <div className="error-alert max-width-1000">{error}</div>}
+        {/* Main Content Area */}
+        <div className="dashboard-main-content">
+          
+          {/* Content Header (Top workspace status, greeting, mobile toggle) */}
+          <header className="content-header-top">
+            <div className="header-greeting-info">
+              <span className="workspace-badge">Rent Management Workspace</span>
+              <h2 className="workspace-title">Welcome back, {user?.name}</h2>
+            </div>
+            
+            <button className="mobile-menu-toggle" onClick={() => setIsMobileNavOpen(true)}>
+              <span className="toggle-icon">☰</span> Menu
+            </button>
+          </header>
 
-      {loading ? (
-        <div className="dashboard-loading">
-          <div className="loading-spinner"></div>
-          <p>Loading your workspace...</p>
-        </div>
-      ) : (
-        <>
+          {error && <div className="error-alert max-width-1000">{error}</div>}
+
+          {loading ? (
+            <div className="dashboard-loading">
+              <div className="loading-spinner"></div>
+              <p>Loading your workspace...</p>
+            </div>
+          ) : (
+            <>
           {/* TAB 1: OVERVIEW PANELS */}
           {activeSubTab === 'overview' && (
-            <main className="dashboard-layout-grid">
+            <main className="dashboard-layout-grid workspace-tab-panel">
               
               {/* 1. Property Overview */}
               <section className="dashboard-card widget-properties">
@@ -390,7 +416,7 @@ function Dashboard({ user, onLogout }) {
 
           {/* TAB 2: PROPERTIES FLOW PANELS */}
           {activeSubTab === 'properties' && (
-            <main className="dashboard-flow-content">
+            <main className="dashboard-flow-content workspace-tab-panel">
               {selectedPropertyId ? (
                 <PropertyDetails 
                   propertyId={selectedPropertyId}
@@ -410,7 +436,7 @@ function Dashboard({ user, onLogout }) {
 
           {/* TAB 3: TENANTS FLOW PANELS */}
           {activeSubTab === 'tenants' && user.role === 'landlord' && (
-            <main className="dashboard-flow-content">
+            <main className="dashboard-flow-content workspace-tab-panel">
               {selectedTenantId ? (
                 <TenantDetails 
                   tenantId={selectedTenantId}
@@ -427,7 +453,7 @@ function Dashboard({ user, onLogout }) {
 
           {/* TAB 4: LEASES FLOW PANELS */}
           {activeSubTab === 'leases' && user.role === 'landlord' && (
-            <main className="dashboard-flow-content">
+            <main className="dashboard-flow-content workspace-tab-panel">
               {selectedLeaseId ? (
                 <LeaseDetails 
                   leaseId={selectedLeaseId}
@@ -444,7 +470,7 @@ function Dashboard({ user, onLogout }) {
 
           {/* TAB 5: RENT FLOW PANELS */}
           {activeSubTab === 'rent' && (
-            <main className="dashboard-flow-content">
+            <main className="dashboard-flow-content workspace-tab-panel">
               {selectedPaymentId ? (
                 <PaymentDetails 
                   paymentId={selectedPaymentId}
@@ -464,6 +490,8 @@ function Dashboard({ user, onLogout }) {
           )}
         </>
       )}
+        </div>
+      </div>
 
       {/* Maintenance Request Modal (Quick Action) */}
       {showMaintModal && (

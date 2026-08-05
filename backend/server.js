@@ -47,14 +47,16 @@ const seedDatabase = async () => {
         const User = require('./models/User');
     const Property = require('./models/Property');
     const Payment = require('./models/Payment');
-    const Maintenance = require('./models/Maintenance');
+        const Maintenance = require('./models/Maintenance');
     const Lease = require('./models/Lease');
+    const Expense = require('./models/Expense');
     const bcrypt = require('bcryptjs');
 
     await Property.deleteMany({});
     await Payment.deleteMany({});
     await Maintenance.deleteMany({});
     await Lease.deleteMany({});
+    await Expense.deleteMany({});
 
     console.log('Seeding initial demo data...');
 
@@ -200,6 +202,27 @@ const seedDatabase = async () => {
       status: 'Active'
     });
     await initialLease.save();
+
+    // Seed mock expenses
+    const exp1 = new Expense({
+      property: prop1._id,
+      amount: 150,
+      category: 'Maintenance',
+      description: 'Plumbing repairs for kitchen sink cabinet leaking',
+      date: new Date(Date.now() - 10 * 24 * 60 * 60 * 1000), // 10 days ago
+      landlord: landlord._id
+    });
+    await exp1.save();
+
+    const exp2 = new Expense({
+      property: prop2._id,
+      amount: 450,
+      category: 'Taxes',
+      description: 'Malibu beachfront property quarterly local municipal taxes',
+      date: new Date(Date.now() - 5 * 24 * 60 * 60 * 1000), // 5 days ago
+      landlord: landlord._id
+    });
+    await exp2.save();
 
     console.log('🎉 Database seeding completed successfully.');
 

@@ -180,10 +180,14 @@ function TenantList({ onSelectTenant }) {
               </div>
 
               <div className="tenant-card-body">
-                <h3 className="tenant-name-lbl">{t.name}</h3>
-                <p className="tenant-meta-text">📧 {t.email}</p>
-                <p className="tenant-meta-text">📞 {t.phone || 'No phone registered'}</p>
-                <span className="joined-label">Joined: {new Date(t.createdAt).toLocaleDateString()}</span>
+                <div className="tenant-details-info">
+                  <h3 className="tenant-name-lbl">{t.name}</h3>
+                  <span className="joined-label">Joined: {new Date(t.createdAt).toLocaleDateString()}</span>
+                </div>
+                <div className="tenant-details-contact">
+                  <p className="tenant-meta-text">📧 {t.email}</p>
+                  <p className="tenant-meta-text">📞 {t.phone || 'No phone registered'}</p>
+                </div>
               </div>
 
               <div className="tenant-card-actions">

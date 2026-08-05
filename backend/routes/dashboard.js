@@ -62,4 +62,19 @@ router.post('/leases/:id/renew', dashboardController.renewLease);
 // TERMINATE Lease (POST)
 router.post('/leases/:id/terminate', dashboardController.terminateLease);
 
+// GET all Expenses (Landlord only)
+router.get('/expenses', dashboardController.getExpenses);
+
+// CREATE Expense (Landlord only)
+router.post('/expenses', dashboardController.createExpense);
+
+// GET Single Expense Details
+router.get('/expenses/:id', dashboardController.getExpenseById);
+
+// EDIT Expense Details (PUT)
+router.put('/expenses/:id', dashboardController.updateExpense);
+
+// DELETE Expense
+router.delete('/expenses/:id', dashboardController.deleteExpense);
+
 module.exports = router;

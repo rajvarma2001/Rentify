@@ -245,11 +245,15 @@ function LeaseList({ user, onSelectLease }) {
               </div>
 
               <div className="lease-card-body">
-                <h3 className="property-name-lbl">{l.property?.name || 'Deleted Property'}</h3>
-                <p className="lease-meta-text">👤 Tenant: {l.tenant?.name || 'N/A'}</p>
-                <p className="lease-meta-text">💵 Monthly Rent: ${l.monthlyRent}/mo</p>
-                <p className="lease-meta-text">📅 Starts: {new Date(l.startDate).toLocaleDateString()}</p>
-                <p className="lease-meta-text font-bold">⌛ Expires: {new Date(l.endDate).toLocaleDateString()}</p>
+                <div className="lease-details-info">
+                  <h3 className="property-name-lbl">{l.property?.name || 'Deleted Property'}</h3>
+                  <p className="lease-meta-text">👤 Tenant: {l.tenant?.name || 'N/A'}</p>
+                  <p className="lease-meta-text">💵 Monthly Rent: ${l.monthlyRent}/mo</p>
+                </div>
+                <div className="lease-details-timeline">
+                  <p className="lease-meta-text">📅 Starts: {new Date(l.startDate).toLocaleDateString()}</p>
+                  <p className="lease-meta-text font-bold">⌛ Expires: {new Date(l.endDate).toLocaleDateString()}</p>
+                </div>
               </div>
 
               <div className="lease-card-actions">
