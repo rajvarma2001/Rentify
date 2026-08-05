@@ -92,6 +92,7 @@ const seedDatabase = async () => {
 
     // Seed Properties
     const prop1 = new Property({
+      _id: new mongoose.Types.ObjectId('60d5ecfa0000000000000001'),
       name: 'Sunset Heights Apartments - 104',
       address: '742 Evergreen Terrace, Springfield',
       rentAmount: 1200,
@@ -110,6 +111,7 @@ const seedDatabase = async () => {
     await prop1.save();
 
     const prop2 = new Property({
+      _id: new mongoose.Types.ObjectId('60d5ecfa0000000000000002'),
       name: 'Pacific Breeze Villa - Unit A',
       address: '101 Ocean Drive, Malibu',
       rentAmount: 2500,
@@ -125,6 +127,7 @@ const seedDatabase = async () => {
     await prop2.save();
 
     const prop3 = new Property({
+      _id: new mongoose.Types.ObjectId('60d5ecfa0000000000000003'),
       name: 'Downtown Tech Loft',
       address: '500 Innovation Way, San Francisco',
       rentAmount: 1800,

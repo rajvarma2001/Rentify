@@ -52,7 +52,7 @@ function PropertyDetails({ propertyId, user, onBackToList }) {
       }
     } catch (err) {
       console.error(err);
-      setError('Could not connect to database.');
+      setError(`Could not connect to database. Details: ${err.message || err}`);
     } finally {
       setLoading(false);
     }
