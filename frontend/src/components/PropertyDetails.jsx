@@ -77,14 +77,96 @@ function PropertyDetails({ propertyId, user, onBackToList }) {
     }
   }, [propertyId]);
 
-  // Toggle Room Status (Landlord Only)
-  const handleToggleRoomStatus = async (roomIdx) => {
+  // Room Form Modal states
+  const [showRoomModal, setShowRoomModal] = useState(false);
+  const [editingRoomIdx, setEditingRoomIdx] = useState(null); // null if adding, number if editing
+  const [roomForm, setRoomForm] = useState({ roomNumber: '', size: '' });
+
+  // Open Room Modal
+  const openRoomModal = (roomIdx = null) => {
+    if (roomIdx !== null) {
+      setEditingRoomIdx(roomIdx);
+      const targetRoom = data.property.rooms[roomIdx];
+      setRoomForm({
+        roomNumber: targetRoom.roomNumber,
+        size: targetRoom.size
+      });
+    } else {
+      setEditingRoomIdx(null);
+      setRoomForm({ roomNumber: '', size: '' });
+    }
+    setShowRoomModal(true);
+  };
+
+  // Submit Room (Add or Edit)
+  const handleRoomSubmit = async (e) => {
+    e.preventDefault();
     if (user.role !== 'landlord') return;
     setActionLoading(true);
     try {
       const updatedRooms = [...data.property.rooms];
-      const currentStatus = updatedRooms[roomIdx].status;
-      updatedRooms[roomIdx].status = currentStatus === 'Occupied' ? 'Vacant' : 'Occupied';
+      if (editingRoomIdx !== null) {
+        updatedRooms[editingRoomIdx] = {
+          ...updatedRooms[editingRoomIdx],
+          roomNumber: roomForm.roomNumber,
+          size: roomForm.size
+        };
+      } else {
+        updatedRooms.push({
+          roomNumber: roomForm.roomNumber,
+          size: roomForm.size,
+          status: 'Vacant'
+        });
+      }
+
+      const response = await axios.put(`/api/dashboard/properties/${propertyId}`, {
+        rooms: updatedRooms
+      });
+      if (response.data.status === 'success') {
+        setShowRoomModal(false);
+        fetchDetails();
+      }
+    } catch (err) {
+      console.error(err);
+      alert('Error saving room details.');
+    } finally {
+      setActionLoading(false);
+    }
+  };
+
+  // Delete Room Unit
+  const handleDeleteRoom = async (roomIdx) => {
+    if (user.role !== 'landlord') return;
+    if (!window.confirm('Are you sure you want to delete this room unit?')) return;
+    setActionLoading(true);
+    try {
+      const updatedRooms = [...data.property.rooms];
+      updatedRooms.splice(roomIdx, 1);
+      
+      const response = await axios.put(`/api/dashboard/properties/${propertyId}`, {
+        rooms: updatedRooms
+      });
+      if (response.data.status === 'success') {
+        fetchDetails();
+      }
+    } catch (err) {
+      console.error(err);
+      alert('Error deleting room.');
+    } finally {
+      setActionLoading(false);
+    }
+  };
+
+  // Set explicit status for a room unit
+  const handleSetRoomStatus = async (roomIdx, targetStatus) => {
+    if (user.role !== 'landlord') return;
+    setActionLoading(true);
+    try {
+      const updatedRooms = [...data.property.rooms];
+      updatedRooms[roomIdx] = {
+        ...updatedRooms[roomIdx],
+        status: targetStatus
+      };
       
       const response = await axios.put(`/api/dashboard/properties/${propertyId}`, {
         rooms: updatedRooms
@@ -259,7 +341,14 @@ function PropertyDetails({ propertyId, user, onBackToList }) {
           {/* TAB 1: Rooms / Units */}
           {activeTab === 'rooms' && (
             <div className="tab-pane-card animate-fade">
-              <h3>Rooms & Units Summary</h3>
+              <div className="pane-header-action">
+                <h3>Rooms & Units Summary</h3>
+                {user.role === 'landlord' && (
+                  <button className="add-room-btn" onClick={() => openRoomModal()}>
+                    ➕ Add Room Unit
+                  </button>
+                )}
+              </div>
               <p className="tab-pane-desc">Manage occupancy, vacant rooms, and dimensions within this property.</p>
               
               {(!property.rooms || property.rooms.length === 0) ? (
@@ -277,16 +366,43 @@ function PropertyDetails({ propertyId, user, onBackToList }) {
                         <span className={`status-badge-lbl ${room.status.toLowerCase()}`}>
                           {room.status}
                         </span>
-                        {user.role === 'landlord' && (
+                      </div>
+                      
+                      {user.role === 'landlord' && (
+                        <div className="room-actions-bar">
+                          {room.status === 'Vacant' ? (
+                            <button 
+                              className="room-action-btn occupy-btn"
+                              onClick={() => handleSetRoomStatus(idx, 'Occupied')}
+                              disabled={actionLoading}
+                            >
+                              Mark Occupied
+                            </button>
+                          ) : (
+                            <button 
+                              className="room-action-btn vacant-btn"
+                              onClick={() => handleSetRoomStatus(idx, 'Vacant')}
+                              disabled={actionLoading}
+                            >
+                              Mark Vacant
+                            </button>
+                          )}
                           <button 
-                            className="toggle-status-btn"
-                            onClick={() => handleToggleRoomStatus(idx)}
+                            className="room-action-btn edit-btn"
+                            onClick={() => openRoomModal(idx)}
                             disabled={actionLoading}
                           >
-                            Mark {room.status === 'Occupied' ? 'Vacant' : 'Occupied'}
+                            ✏️ Edit
                           </button>
-                        )}
-                      </div>
+                          <button 
+                            className="room-action-btn delete-btn"
+                            onClick={() => handleDeleteRoom(idx)}
+                            disabled={actionLoading}
+                          >
+                            🗑️ Delete
+                          </button>
+                        </div>
+                      )}
                     </div>
                   ))}
                 </div>
@@ -571,6 +687,58 @@ function PropertyDetails({ propertyId, user, onBackToList }) {
             </p>
           </div>
         </aside>
+
+        {/* Rooms Add/Edit Modal */}
+        {showRoomModal && (
+          <div className="modal-backdrop">
+            <div className="modal-card">
+              <h3 className="modal-title">
+                {editingRoomIdx !== null ? '✏️ Edit Room Unit' : '➕ Add Room Unit'}
+              </h3>
+              <form onSubmit={handleRoomSubmit} className="modal-form">
+                <div className="form-group">
+                  <label>Unit / Room Number *</label>
+                  <input 
+                    type="text" 
+                    placeholder="e.g. 104-A, Suite 12"
+                    value={roomForm.roomNumber}
+                    onChange={e => setRoomForm({ ...roomForm, roomNumber: e.target.value })}
+                    required
+                  />
+                </div>
+
+                <div className="form-group">
+                  <label>Unit Size (Dimensions) *</label>
+                  <input 
+                    type="text" 
+                    placeholder="e.g. 12x15, 450 sqft"
+                    value={roomForm.size}
+                    onChange={e => setRoomForm({ ...roomForm, size: e.target.value })}
+                    required
+                  />
+                </div>
+
+                <div className="modal-actions">
+                  <button 
+                    type="button" 
+                    className="cancel-btn" 
+                    onClick={() => setShowRoomModal(false)}
+                    disabled={actionLoading}
+                  >
+                    Cancel
+                  </button>
+                  <button 
+                    type="submit" 
+                    className="save-btn"
+                    disabled={actionLoading}
+                  >
+                    {actionLoading ? 'Saving...' : 'Save Unit Details'}
+                  </button>
+                </div>
+              </form>
+            </div>
+          </div>
+        )}
 
       </div>
     </div>

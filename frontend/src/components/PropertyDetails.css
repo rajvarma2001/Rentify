@@ -234,22 +234,83 @@
 .status-badge-lbl.occupied { background: rgba(162, 89, 255, 0.1); color: #c084fc; border: 1px solid rgba(162, 89, 255, 0.2); }
 .status-badge-lbl.vacant { background: rgba(0, 180, 216, 0.1); color: #00b4d8; border: 1px solid rgba(0, 180, 216, 0.25); }
 
-.toggle-status-btn {
-  background: transparent;
-  border: 1px dashed var(--glass-border);
-  color: var(--text-secondary);
-  font-size: 0.75rem;
-  font-weight: 600;
-  padding: 0.25rem 0.5rem;
-  border-radius: 6px;
+.add-room-btn {
+  background: rgba(0, 180, 216, 0.08);
+  border: 1px solid var(--neon-blue);
+  color: var(--neon-blue);
+  border-radius: 8px;
+  padding: 0.45rem 0.95rem;
+  font-weight: 700;
+  font-size: 0.82rem;
   cursor: pointer;
-  transition: all 0.2s;
+  transition: all 0.25s ease;
 }
 
-.toggle-status-btn:hover {
-  background: rgba(255, 255, 255, 0.03);
+.add-room-btn:hover {
+  background: rgba(0, 180, 216, 0.15);
+  box-shadow: 0 0 10px rgba(0, 180, 216, 0.25);
+  transform: translateY(-1px);
+}
+
+.room-actions-bar {
+  display: flex;
+  flex-direction: column;
+  gap: 0.45rem;
+  border-top: 1px dashed var(--glass-border);
+  padding-top: 0.85rem;
+  margin-top: 0.25rem;
+}
+
+.room-action-btn {
+  background: rgba(255, 255, 255, 0.01);
+  border: 1px solid var(--glass-border);
+  border-radius: 8px;
+  color: var(--text-secondary);
+  font-size: 0.76rem;
+  font-weight: 600;
+  padding: 0.35rem 0.6rem;
+  cursor: pointer;
+  transition: all 0.2s ease;
+  text-align: center;
+}
+
+.room-action-btn:hover {
+  background: rgba(255, 255, 255, 0.04);
   color: #ffffff;
-  border-color: #ffffff;
+  border-color: rgba(255, 255, 255, 0.2);
+}
+
+.room-action-btn.occupy-btn {
+  background: rgba(162, 89, 255, 0.03);
+  border-color: rgba(162, 89, 255, 0.2);
+  color: #c084fc;
+}
+
+.room-action-btn.occupy-btn:hover {
+  background: rgba(162, 89, 255, 0.1);
+  color: #ffffff;
+}
+
+.room-action-btn.vacant-btn {
+  background: rgba(0, 180, 216, 0.03);
+  border-color: rgba(0, 180, 216, 0.2);
+  color: #00b4d8;
+}
+
+.room-action-btn.vacant-btn:hover {
+  background: rgba(0, 180, 216, 0.1);
+  color: #ffffff;
+}
+
+.room-action-btn.delete-btn {
+  background: rgba(239, 71, 111, 0.03);
+  border-color: rgba(239, 71, 111, 0.2);
+  color: #ef476f;
+}
+
+.room-action-btn.delete-btn:hover {
+  background: rgba(239, 71, 111, 0.1);
+  color: #ffffff;
 }
 
 /* TAB 2: Lease Details styles */
