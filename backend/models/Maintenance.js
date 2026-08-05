@@ -31,6 +31,10 @@ const MaintenanceSchema = new mongoose.Schema({
     enum: ['low', 'medium', 'high'],
     default: 'medium'
   },
+  assignedWorker: {
+    type: String,
+    default: ''
+  },
   createdAt: {
     type: Date,
     default: Date.now

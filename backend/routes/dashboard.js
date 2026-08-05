@@ -77,4 +77,13 @@ router.put('/expenses/:id', dashboardController.updateExpense);
 // DELETE Expense
 router.delete('/expenses/:id', dashboardController.deleteExpense);
 
+// GET all Maintenance Requests
+router.get('/maintenance', dashboardController.getMaintenanceRequests);
+
+// GET Single Maintenance Request details
+router.get('/maintenance/:id', dashboardController.getMaintenanceById);
+
+// UPDATE Maintenance Request details (PUT)
+router.put('/maintenance/:id', dashboardController.updateMaintenanceRequest);
+
 module.exports = router;

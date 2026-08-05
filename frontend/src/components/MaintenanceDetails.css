@@ -1,0 +1,291 @@
+.maintenance-details-wrapper {
+  width: 100%;
+  max-width: 600px;
+  margin: 0 auto;
+  opacity: 0;
+  animation: slideUpFade 0.6s cubic-bezier(0.16, 1, 0.3, 1) forwards;
+}
+
+.details-header-row {
+  display: flex;
+  margin-bottom: 2rem;
+}
+
+.back-list-btn {
+  background: rgba(255, 255, 255, 0.02);
+  color: var(--text-secondary);
+  border: 1px solid var(--glass-border);
+  border-radius: 8px;
+  padding: 0.5rem 1.15rem;
+  font-weight: 600;
+  font-size: 0.85rem;
+  cursor: pointer;
+  transition: all 0.25s;
+}
+
+.back-list-btn:hover {
+  background: rgba(255, 255, 255, 0.05);
+  color: #ffffff;
+  border-color: rgba(255, 255, 255, 0.2);
+  transform: translateX(-3px);
+}
+
+/* Premium Receipt Slip Card */
+.maintenance-slip-card {
+  background: var(--glass-bg);
+  backdrop-filter: blur(20px);
+  -webkit-backdrop-filter: blur(20px);
+  border: 1px solid var(--glass-border);
+  border-radius: 24px;
+  padding: 2.5rem;
+  box-shadow: 0 15px 50px rgba(0, 0, 0, 0.5), 0 0 1px rgba(255, 255, 255, 0.1) inset;
+  text-align: left;
+  position: relative;
+}
+
+.slip-top-banner {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 2rem;
+}
+
+.slip-logo {
+  display: flex;
+  align-items: center;
+  gap: 0.65rem;
+}
+
+.slip-logo .logo-icon {
+  font-size: 1.5rem;
+  background: rgba(162, 89, 255, 0.08);
+  padding: 0.35rem;
+  border-radius: 8px;
+}
+
+.slip-logo h3 {
+  font-size: 1.1rem;
+  font-weight: 800;
+  margin: 0;
+  color: #ffffff;
+  letter-spacing: 0.5px;
+}
+
+.status-badge-lbl {
+  font-size: 0.7rem;
+  font-weight: 800;
+  text-transform: uppercase;
+  padding: 0.3rem 0.75rem;
+  border-radius: 6px;
+  letter-spacing: 0.5px;
+}
+
+/* Status colors */
+.status-badge-lbl.pending { background: rgba(255, 193, 7, 0.1); color: #ffc107; border: 1px solid rgba(255, 193, 7, 0.25); }
+.status-badge-lbl.in-progress { background: rgba(0, 180, 216, 0.1); color: #00b4d8; border: 1px solid rgba(0, 180, 216, 0.25); }
+.status-badge-lbl.resolved { background: rgba(56, 176, 0, 0.1); color: #52b788; border: 1px solid rgba(56, 176, 0, 0.25); }
+
+/* Slip Meta Info */
+.slip-meta-box {
+  display: flex;
+  flex-direction: column;
+  gap: 0.75rem;
+  background: rgba(255, 255, 255, 0.01);
+  border: 1px solid var(--glass-border);
+  border-radius: 14px;
+  padding: 1.15rem;
+  margin-bottom: 2rem;
+}
+
+.meta-row {
+  display: flex;
+  justify-content: space-between;
+  font-size: 0.8rem;
+}
+
+.meta-row .lbl {
+  color: var(--text-secondary);
+  font-weight: 500;
+}
+
+.meta-row .val {
+  color: #ffffff;
+  font-weight: 700;
+}
+
+.meta-row .val.priority.low { color: #a5a6b5; }
+.meta-row .val.priority.medium { color: #ff9f43; }
+.meta-row .val.priority.high { color: #ff5252; }
+
+/* Divider dashed line */
+.slip-divider {
+  border-top: 2px dashed var(--glass-border);
+  margin: 2rem 0;
+  height: 0;
+}
+
+/* Sections */
+.slip-section {
+  margin-bottom: 2rem;
+}
+
+.slip-section h4 {
+  font-size: 0.75rem;
+  text-transform: uppercase;
+  color: var(--text-secondary);
+  letter-spacing: 1px;
+  margin-top: 0;
+  margin-bottom: 0.85rem;
+  font-weight: 700;
+}
+
+.property-compact-card {
+  background: rgba(255, 255, 255, 0.01);
+  border: 1px solid var(--glass-border);
+  border-radius: 12px;
+  padding: 1rem 1.25rem;
+  display: flex;
+  flex-direction: column;
+  gap: 0.35rem;
+}
+
+.property-compact-card .name {
+  font-weight: 700;
+  font-size: 0.95rem;
+  color: #ffffff;
+}
+
+.property-compact-card .addr {
+  font-size: 0.8rem;
+  color: var(--text-secondary);
+}
+
+.property-compact-card .type {
+  font-size: 0.75rem;
+  color: var(--neon-blue);
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+}
+
+/* Tenant Compact Card */
+.tenant-compact-card {
+  display: flex;
+  align-items: center;
+  gap: 1.15rem;
+  background: rgba(255, 255, 255, 0.01);
+  border: 1px solid var(--glass-border);
+  border-radius: 12px;
+  padding: 1rem 1.25rem;
+}
+
+.tenant-compact-card .avatar-icon {
+  font-size: 1.65rem;
+  background: rgba(162, 89, 255, 0.08);
+  padding: 0.5rem;
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 44px;
+  height: 44px;
+}
+
+.tenant-info {
+  display: flex;
+  flex-direction: column;
+  gap: 0.2rem;
+}
+
+.tenant-info .name {
+  font-weight: 700;
+  font-size: 0.95rem;
+  color: #ffffff;
+}
+
+.tenant-info .contact {
+  font-size: 0.8rem;
+  color: var(--text-secondary);
+}
+
+/* Issue details */
+.ticket-title {
+  font-size: 1.15rem;
+  font-weight: 800;
+  color: #ffffff;
+  margin: 0 0 0.75rem;
+}
+
+.description-quote {
+  background: rgba(255, 255, 255, 0.01);
+  border-left: 3px solid var(--neon-purple);
+  border-radius: 4px;
+  padding: 0.85rem 1.25rem;
+}
+
+.description-quote p {
+  margin: 0;
+  font-size: 0.85rem;
+  color: var(--text-secondary);
+  line-height: 1.5;
+}
+
+/* Assignment details */
+.assignment-status-box {
+  display: flex;
+  flex-direction: column;
+  gap: 1rem;
+  background: rgba(255, 255, 255, 0.01);
+  border: 1px solid var(--glass-border);
+  border-radius: 12px;
+  padding: 1.15rem;
+}
+
+.status-item {
+  display: flex;
+  justify-content: space-between;
+  font-size: 0.85rem;
+  align-items: center;
+}
+
+.status-item .lbl {
+  color: var(--text-secondary);
+  font-weight: 500;
+}
+
+.status-item .val.worker-name {
+  font-weight: 700;
+  color: var(--neon-blue);
+}
+
+.status-item .val.status-state {
+  font-weight: 800;
+  font-size: 0.75rem;
+  letter-spacing: 0.5px;
+}
+
+.status-item .val.status-state.pending { color: #ffc107; }
+.status-item .val.status-state.in-progress { color: #00b4d8; }
+.status-item .val.status-state.resolved { color: #52b788; }
+
+/* Footer */
+.slip-footer {
+  text-align: center;
+  font-size: 0.75rem;
+  color: var(--text-secondary);
+  display: flex;
+  flex-direction: column;
+  gap: 0.25rem;
+}
+
+.slip-footer p {
+  margin: 0;
+}
+
+.slip-footer .thank-you {
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: 1px;
+  color: var(--neon-purple);
+  margin-top: 0.5rem;
+}
