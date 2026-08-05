@@ -11,6 +11,7 @@ const expenseRoutes = require('./expenses');
 const maintenanceRoutes = require('./maintenance');
 const reportRoutes = require('./reports');
 const notificationRoutes = require('./notifications');
+const profileRoutes = require('./profile');
 
 // Delegate sub-routes
 router.use('/', statsRoutes); // matches /stats
@@ -22,5 +23,6 @@ router.use('/expenses', expenseRoutes);
 router.use('/maintenance', maintenanceRoutes);
 router.use('/reports', reportRoutes);
 router.use('/notifications', notificationRoutes);
+router.use('/profile', profileRoutes);
 
 module.exports = router;

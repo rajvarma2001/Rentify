@@ -14,6 +14,7 @@ import MaintenanceList from './MaintenanceList'
 import MaintenanceDetails from './MaintenanceDetails'
 import ReportDashboard from './ReportDashboard'
 import NotificationCenter from './NotificationCenter'
+import Profile from './Profile'
 import './Dashboard.css'
 
 function Dashboard({ user, onLogout }) {
@@ -221,6 +222,12 @@ function Dashboard({ user, onLogout }) {
               onClick={() => { setActiveSubTab('notifications'); setSelectedPropertyId(null); setSelectedTenantId(null); setSelectedLeaseId(null); setSelectedPaymentId(null); setSelectedExpenseId(null); setSelectedRequestId(null); setIsMobileNavOpen(false); }}
             >
               🔔 Notifications
+            </button>
+            <button 
+              className={`nav-tab-btn ${activeSubTab === 'profile' ? 'active' : ''}`}
+              onClick={() => { setActiveSubTab('profile'); setSelectedPropertyId(null); setSelectedTenantId(null); setSelectedLeaseId(null); setSelectedPaymentId(null); setSelectedExpenseId(null); setSelectedRequestId(null); setIsMobileNavOpen(false); }}
+            >
+              👤 Profile Settings
             </button>
           </nav>
 
@@ -579,6 +586,13 @@ function Dashboard({ user, onLogout }) {
           {activeSubTab === 'notifications' && (
             <main className="dashboard-flow-content workspace-tab-panel">
               <NotificationCenter user={user} />
+            </main>
+          )}
+
+          {/* TAB 10: USER PROFILE PANELS */}
+          {activeSubTab === 'profile' && (
+            <main className="dashboard-flow-content workspace-tab-panel">
+              <Profile user={user} onLogout={onLogout} />
             </main>
           )}
         </>

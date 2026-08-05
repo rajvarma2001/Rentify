@@ -32,6 +32,13 @@ const UserSchema = new mongoose.Schema({
     enum: ['Active', 'Suspended'],
     default: 'Active'
   },
+  notificationSettings: {
+    rentDue: { type: Boolean, default: true },
+    paymentReceived: { type: Boolean, default: true },
+    leaseExpiry: { type: Boolean, default: true },
+    maintenanceUpdate: { type: Boolean, default: true },
+    systemNotif: { type: Boolean, default: true }
+  },
   createdAt: {
     type: Date,
     default: Date.now
