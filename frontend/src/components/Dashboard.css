@@ -986,6 +986,10 @@
    RESPONSIVE LAYOUT MEDIA QUERIES
 ---------------------------------------------------- */
 @media (max-width: 992px) {
+  .glow-orb {
+    display: none !important;
+  }
+
   .dashboard-container {
     padding: 1.5rem 1rem;
   }
@@ -1027,6 +1031,8 @@
     margin: 0;
     visibility: hidden;
     pointer-events: none;
+    backdrop-filter: none !important;
+    -webkit-backdrop-filter: none !important;
     transition: transform 0.35s cubic-bezier(0.16, 1, 0.3, 1), visibility 0.35s cubic-bezier(0.16, 1, 0.3, 1);
   }
   
@@ -1034,6 +1040,8 @@
     transform: translateX(0);
     visibility: visible;
     pointer-events: auto;
+    backdrop-filter: blur(20px) !important;
+    -webkit-backdrop-filter: blur(20px) !important;
   }
 }
 
