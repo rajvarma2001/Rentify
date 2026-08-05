@@ -10,6 +10,7 @@ const paymentRoutes = require('./payments');
 const expenseRoutes = require('./expenses');
 const maintenanceRoutes = require('./maintenance');
 const reportRoutes = require('./reports');
+const notificationRoutes = require('./notifications');
 
 // Delegate sub-routes
 router.use('/', statsRoutes); // matches /stats
@@ -20,5 +21,6 @@ router.use('/payments', paymentRoutes);
 router.use('/expenses', expenseRoutes);
 router.use('/maintenance', maintenanceRoutes);
 router.use('/reports', reportRoutes);
+router.use('/notifications', notificationRoutes);
 
 module.exports = router;

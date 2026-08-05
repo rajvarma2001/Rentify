@@ -13,6 +13,7 @@ import ExpenseDetails from './ExpenseDetails'
 import MaintenanceList from './MaintenanceList'
 import MaintenanceDetails from './MaintenanceDetails'
 import ReportDashboard from './ReportDashboard'
+import NotificationCenter from './NotificationCenter'
 import './Dashboard.css'
 
 function Dashboard({ user, onLogout }) {
@@ -214,6 +215,12 @@ function Dashboard({ user, onLogout }) {
               onClick={() => { setActiveSubTab('maintenance'); setSelectedPropertyId(null); setSelectedTenantId(null); setSelectedLeaseId(null); setSelectedPaymentId(null); setSelectedExpenseId(null); setSelectedRequestId(null); setIsMobileNavOpen(false); }}
             >
               🛠️ Maintenance
+            </button>
+            <button 
+              className={`nav-tab-btn ${activeSubTab === 'notifications' ? 'active' : ''}`}
+              onClick={() => { setActiveSubTab('notifications'); setSelectedPropertyId(null); setSelectedTenantId(null); setSelectedLeaseId(null); setSelectedPaymentId(null); setSelectedExpenseId(null); setSelectedRequestId(null); setIsMobileNavOpen(false); }}
+            >
+              🔔 Notifications
             </button>
           </nav>
 
@@ -565,6 +572,13 @@ function Dashboard({ user, onLogout }) {
           {activeSubTab === 'reports' && user.role === 'landlord' && (
             <main className="dashboard-flow-content workspace-tab-panel">
               <ReportDashboard user={user} />
+            </main>
+          )}
+
+          {/* TAB 9: ACTIVITY NOTIFICATIONS PANELS */}
+          {activeSubTab === 'notifications' && (
+            <main className="dashboard-flow-content workspace-tab-panel">
+              <NotificationCenter user={user} />
             </main>
           )}
         </>
