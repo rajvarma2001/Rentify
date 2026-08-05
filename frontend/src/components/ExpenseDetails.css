@@ -1,0 +1,240 @@
+.expense-details-wrapper {
+  width: 100%;
+  max-width: 600px;
+  margin: 0 auto;
+  opacity: 0;
+  animation: slideUpFade 0.6s cubic-bezier(0.16, 1, 0.3, 1) forwards;
+}
+
+.details-header-row {
+  display: flex;
+  margin-bottom: 2rem;
+}
+
+.back-list-btn {
+  background: rgba(255, 255, 255, 0.02);
+  color: var(--text-secondary);
+  border: 1px solid var(--glass-border);
+  border-radius: 8px;
+  padding: 0.5rem 1.15rem;
+  font-weight: 600;
+  font-size: 0.85rem;
+  cursor: pointer;
+  transition: all 0.25s;
+}
+
+.back-list-btn:hover {
+  background: rgba(255, 255, 255, 0.05);
+  color: #ffffff;
+  border-color: rgba(255, 255, 255, 0.2);
+  transform: translateX(-3px);
+}
+
+/* Premium Receipt Slip Card */
+.expense-slip-card {
+  background: var(--glass-bg);
+  backdrop-filter: blur(20px);
+  -webkit-backdrop-filter: blur(20px);
+  border: 1px solid var(--glass-border);
+  border-radius: 24px;
+  padding: 2.5rem;
+  box-shadow: 0 15px 50px rgba(0, 0, 0, 0.5), 0 0 1px rgba(255, 255, 255, 0.1) inset;
+  text-align: left;
+  position: relative;
+}
+
+.slip-top-banner {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 2rem;
+}
+
+.slip-logo {
+  display: flex;
+  align-items: center;
+  gap: 0.65rem;
+}
+
+.slip-logo .logo-icon {
+  font-size: 1.5rem;
+  background: rgba(162, 89, 255, 0.08);
+  padding: 0.35rem;
+  border-radius: 8px;
+}
+
+.slip-logo h3 {
+  font-size: 1.1rem;
+  font-weight: 800;
+  margin: 0;
+  color: #ffffff;
+  letter-spacing: 0.5px;
+}
+
+.category-tag {
+  font-size: 0.7rem;
+  font-weight: 800;
+  text-transform: uppercase;
+  padding: 0.3rem 0.75rem;
+  border-radius: 6px;
+  letter-spacing: 0.5px;
+}
+
+/* Category specific colors */
+.category-tag.maintenance { background: rgba(255, 159, 67, 0.1); color: #ff9f43; border: 1px solid rgba(255, 159, 67, 0.25); }
+.category-tag.utilities { background: rgba(0, 180, 216, 0.1); color: #00b4d8; border: 1px solid rgba(0, 180, 216, 0.25); }
+.category-tag.taxes { background: rgba(162, 89, 255, 0.1); color: #c084fc; border: 1px solid rgba(162, 89, 255, 0.25); }
+.category-tag.insurance { background: rgba(56, 176, 0, 0.1); color: #52b788; border: 1px solid rgba(56, 176, 0, 0.25); }
+.category-tag.other { background: rgba(255, 255, 255, 0.04); color: var(--text-secondary); border: 1px solid var(--glass-border); }
+
+/* Slip Meta Info */
+.slip-meta-box {
+  display: flex;
+  flex-direction: column;
+  gap: 0.75rem;
+  background: rgba(255, 255, 255, 0.01);
+  border: 1px solid var(--glass-border);
+  border-radius: 14px;
+  padding: 1.15rem;
+  margin-bottom: 2rem;
+}
+
+.meta-row {
+  display: flex;
+  justify-content: space-between;
+  font-size: 0.8rem;
+}
+
+.meta-row .lbl {
+  color: var(--text-secondary);
+  font-weight: 500;
+}
+
+.meta-row .val {
+  color: #ffffff;
+  font-weight: 700;
+}
+
+/* Divider dashed line */
+.slip-divider {
+  border-top: 2px dashed var(--glass-border);
+  margin: 2rem 0;
+  height: 0;
+}
+
+/* Sections */
+.slip-section {
+  margin-bottom: 2rem;
+}
+
+.slip-section h4 {
+  font-size: 0.75rem;
+  text-transform: uppercase;
+  color: var(--text-secondary);
+  letter-spacing: 1px;
+  margin-top: 0;
+  margin-bottom: 0.85rem;
+  font-weight: 700;
+}
+
+.property-compact-card {
+  background: rgba(255, 255, 255, 0.01);
+  border: 1px solid var(--glass-border);
+  border-radius: 12px;
+  padding: 1rem 1.25rem;
+  display: flex;
+  flex-direction: column;
+  gap: 0.35rem;
+}
+
+.property-compact-card .name {
+  font-weight: 700;
+  font-size: 0.95rem;
+  color: #ffffff;
+}
+
+.property-compact-card .addr {
+  font-size: 0.8rem;
+  color: var(--text-secondary);
+}
+
+.property-compact-card .type {
+  font-size: 0.75rem;
+  color: var(--neon-blue);
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+}
+
+.description-quote {
+  background: rgba(255, 255, 255, 0.01);
+  border-left: 3px solid var(--neon-purple);
+  border-radius: 4px;
+  padding: 0.85rem 1.25rem;
+}
+
+.description-quote p {
+  margin: 0;
+  font-size: 0.85rem;
+  color: var(--text-secondary);
+  line-height: 1.5;
+  font-style: italic;
+}
+
+/* Pricing Section */
+.slip-pricing-section {
+  display: flex;
+  flex-direction: column;
+  gap: 0.85rem;
+}
+
+.pricing-row {
+  display: flex;
+  justify-content: space-between;
+  font-size: 0.85rem;
+}
+
+.pricing-row.header {
+  color: var(--text-secondary);
+  font-weight: 700;
+  text-transform: uppercase;
+  font-size: 0.75rem;
+  letter-spacing: 0.5px;
+  border-bottom: 1px solid var(--glass-border);
+  padding-bottom: 0.5rem;
+}
+
+.pricing-row.item {
+  color: #ffffff;
+  font-weight: 500;
+}
+
+.pricing-row.total {
+  border-top: 1px solid var(--glass-border);
+  padding-top: 0.75rem;
+  font-size: 1.05rem;
+  font-weight: 800;
+  color: var(--neon-blue);
+}
+
+/* Footer */
+.slip-footer {
+  text-align: center;
+  font-size: 0.75rem;
+  color: var(--text-secondary);
+  display: flex;
+  flex-direction: column;
+  gap: 0.25rem;
+}
+
+.slip-footer p {
+  margin: 0;
+}
+
+.slip-footer .thank-you {
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: 1px;
+  color: var(--neon-purple);
+  margin-top: 0.5rem;
+}

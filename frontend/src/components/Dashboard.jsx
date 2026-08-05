@@ -8,16 +8,19 @@ import LeaseList from './LeaseList'
 import LeaseDetails from './LeaseDetails'
 import RentDashboard from './RentDashboard'
 import PaymentDetails from './PaymentDetails'
+import ExpenseList from './ExpenseList'
+import ExpenseDetails from './ExpenseDetails'
 import './Dashboard.css'
 
 function Dashboard({ user, onLogout }) {
-  // Navigation tabs state: 'overview' | 'properties' | 'tenants' | 'leases' | 'rent'
+  // Navigation tabs state: 'overview' | 'properties' | 'tenants' | 'leases' | 'rent' | 'expenses'
   const [activeSubTab, setActiveSubTab] = useState('overview');
   const [isMobileNavOpen, setIsMobileNavOpen] = useState(false);
   const [selectedPropertyId, setSelectedPropertyId] = useState(null);
   const [selectedTenantId, setSelectedTenantId] = useState(null);
   const [selectedLeaseId, setSelectedLeaseId] = useState(null);
   const [selectedPaymentId, setSelectedPaymentId] = useState(null);
+  const [selectedExpenseId, setSelectedExpenseId] = useState(null);
 
   // Stats State
   const [stats, setStats] = useState({
@@ -158,13 +161,13 @@ function Dashboard({ user, onLogout }) {
           <nav className="sidebar-nav-tabs">
             <button 
               className={`nav-tab-btn ${activeSubTab === 'overview' ? 'active' : ''}`}
-              onClick={() => { setActiveSubTab('overview'); setSelectedPropertyId(null); setSelectedTenantId(null); setSelectedLeaseId(null); setSelectedPaymentId(null); setIsMobileNavOpen(false); }}
+              onClick={() => { setActiveSubTab('overview'); setSelectedPropertyId(null); setSelectedTenantId(null); setSelectedLeaseId(null); setSelectedPaymentId(null); setSelectedExpenseId(null); setIsMobileNavOpen(false); }}
             >
               📊 Overview
             </button>
             <button 
               className={`nav-tab-btn ${activeSubTab === 'properties' ? 'active' : ''}`}
-              onClick={() => { setActiveSubTab('properties'); setSelectedTenantId(null); setSelectedLeaseId(null); setSelectedPaymentId(null); setIsMobileNavOpen(false); }}
+              onClick={() => { setActiveSubTab('properties'); setSelectedPropertyId(null); setSelectedTenantId(null); setSelectedLeaseId(null); setSelectedPaymentId(null); setSelectedExpenseId(null); setIsMobileNavOpen(false); }}
             >
               🏠 Properties
             </button>
@@ -172,21 +175,27 @@ function Dashboard({ user, onLogout }) {
               <>
                 <button 
                   className={`nav-tab-btn ${activeSubTab === 'tenants' ? 'active' : ''}`}
-                  onClick={() => { setActiveSubTab('tenants'); setSelectedPropertyId(null); setSelectedLeaseId(null); setSelectedPaymentId(null); setIsMobileNavOpen(false); }}
+                  onClick={() => { setActiveSubTab('tenants'); setSelectedPropertyId(null); setSelectedTenantId(null); setSelectedLeaseId(null); setSelectedPaymentId(null); setSelectedExpenseId(null); setIsMobileNavOpen(false); }}
                 >
                   👥 Tenants
                 </button>
                 <button 
                   className={`nav-tab-btn ${activeSubTab === 'leases' ? 'active' : ''}`}
-                  onClick={() => { setActiveSubTab('leases'); setSelectedPropertyId(null); setSelectedTenantId(null); setSelectedPaymentId(null); setIsMobileNavOpen(false); }}
+                  onClick={() => { setActiveSubTab('leases'); setSelectedPropertyId(null); setSelectedTenantId(null); setSelectedLeaseId(null); setSelectedPaymentId(null); setSelectedExpenseId(null); setIsMobileNavOpen(false); }}
                 >
                   📝 Leases
+                </button>
+                <button 
+                  className={`nav-tab-btn ${activeSubTab === 'expenses' ? 'active' : ''}`}
+                  onClick={() => { setActiveSubTab('expenses'); setSelectedPropertyId(null); setSelectedTenantId(null); setSelectedLeaseId(null); setSelectedPaymentId(null); setSelectedExpenseId(null); setIsMobileNavOpen(false); }}
+                >
+                  💸 Expenses
                 </button>
               </>
             )}
             <button 
               className={`nav-tab-btn ${activeSubTab === 'rent' ? 'active' : ''}`}
-              onClick={() => { setActiveSubTab('rent'); setSelectedPropertyId(null); setSelectedTenantId(null); setSelectedLeaseId(null); setSelectedPaymentId(null); setIsMobileNavOpen(false); }}
+              onClick={() => { setActiveSubTab('rent'); setSelectedPropertyId(null); setSelectedTenantId(null); setSelectedLeaseId(null); setSelectedPaymentId(null); setSelectedExpenseId(null); setIsMobileNavOpen(false); }}
             >
               💳 Rent & Payments
             </button>
@@ -394,6 +403,9 @@ function Dashboard({ user, onLogout }) {
                       <button className="action-btn animate-btn" onClick={() => setActiveSubTab('rent')}>
                         💳 Open Rent Dashboard
                       </button>
+                      <button className="action-btn animate-btn" onClick={() => setActiveSubTab('expenses')}>
+                        💸 Manage Expenses
+                      </button>
                     </>
                   ) : (
                     <>
@@ -484,6 +496,24 @@ function Dashboard({ user, onLogout }) {
                   user={user}
                   onSelectPayment={setSelectedPaymentId}
                   onRefresh={fetchStats}
+                />
+              )}
+            </main>
+          )}
+
+          {/* TAB 6: EXPENSES FLOW PANELS */}
+          {activeSubTab === 'expenses' && user.role === 'landlord' && (
+            <main className="dashboard-flow-content workspace-tab-panel">
+              {selectedExpenseId ? (
+                <ExpenseDetails 
+                  expenseId={selectedExpenseId}
+                  onBackToList={() => setSelectedExpenseId(null)}
+                />
+              ) : (
+                <ExpenseList 
+                  user={user}
+                  properties={stats.properties}
+                  onSelectExpense={setSelectedExpenseId}
                 />
               )}
             </main>
