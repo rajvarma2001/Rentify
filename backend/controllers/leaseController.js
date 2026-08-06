@@ -31,6 +31,14 @@ exports.createLease = async (req, res) => {
       return res.status(404).json({ status: 'error', message: 'Property not found' });
     }
 
+    // Prevent Double Booking
+    if (propertyObj.assignedTenant !== null && propertyObj.assignedTenant !== undefined) {
+      return res.status(400).json({ 
+        status: 'error', 
+        message: 'This property already has an active tenant assigned. Please terminate the active lease first.' 
+      });
+    }
+
     const newLease = new Lease({
       property: propertyId,
       tenant: tenantId,

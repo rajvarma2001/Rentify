@@ -1,4 +1,5 @@
 const bcrypt = require('bcryptjs');
+const jwt = require('jsonwebtoken');
 const User = require('../models/User');
 
 // Register a new user
@@ -35,15 +36,24 @@ exports.register = async (req, res) => {
 
     const savedUser = await newUser.save();
     
+    // Generate token
+    const token = jwt.sign(
+      { id: savedUser._id, role: savedUser.role },
+      process.env.JWT_SECRET || 'rentify_jwt_secret_token_key_2026_xYz',
+      { expiresIn: '7d' }
+    );
+
     // Response (exclude password)
     res.status(201).json({
       status: 'success',
       message: 'Registration successful',
+      token,
       user: {
         id: savedUser._id,
         name: savedUser.name,
         email: savedUser.email,
-        role: savedUser.role
+        role: savedUser.role,
+        token: token
       }
     });
 
@@ -75,14 +85,23 @@ exports.login = async (req, res) => {
       return res.status(400).json({ status: 'error', message: 'Invalid email or password' });
     }
 
+    // Generate token
+    const token = jwt.sign(
+      { id: user._id, role: user.role },
+      process.env.JWT_SECRET || 'rentify_jwt_secret_token_key_2026_xYz',
+      { expiresIn: '7d' }
+    );
+
     res.json({
       status: 'success',
       message: 'Login successful',
+      token,
       user: {
         id: user._id,
         name: user.name,
         email: user.email,
-        role: user.role
+        role: user.role,
+        token: token
       }
     });
 

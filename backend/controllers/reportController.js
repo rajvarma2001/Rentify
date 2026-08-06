@@ -19,7 +19,7 @@ exports.getReports = async (req, res) => {
 
     // 2. Fetch payments & expenses associated with properties
     const payments = await Payment.find({ property: { $in: propertyIds } }).populate('property', 'name');
-    const expenses = await Expense.find({ landlord: landlordId }).populate('property', 'name');
+    const expenses = await Expense.find({ landlord: landlordObjId }).populate('property', 'name');
 
     // 3. Property Report Summary
     const totalProperties = properties.length;

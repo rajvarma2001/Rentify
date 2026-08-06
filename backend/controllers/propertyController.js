@@ -2,6 +2,7 @@ const mongoose = require('mongoose');
 const Property = require('../models/Property');
 const Payment = require('../models/Payment');
 const Maintenance = require('../models/Maintenance');
+const Lease = require('../models/Lease');
 
 // Create property (Landlord only)
 exports.createProperty = async (req, res) => {
@@ -119,9 +120,10 @@ exports.deleteProperty = async (req, res) => {
       return res.status(404).json({ status: 'error', message: 'Property not found' });
     }
 
-    // Delete related payments and maintenance logs
+    // Delete related payments, maintenance logs, and leases
     await Payment.deleteMany({ property: propertyId });
     await Maintenance.deleteMany({ property: propertyId });
+    await Lease.deleteMany({ property: propertyId });
 
     res.json({ status: 'success', message: 'Property and its associated logs successfully deleted' });
   } catch (err) {

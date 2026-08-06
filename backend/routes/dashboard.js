@@ -1,5 +1,9 @@
 const express = require('express');
 const router = express.Router();
+const auth = require('../middleware/auth');
+
+// Apply auth middleware to protect all sub-routes
+router.use(auth);
 
 // Sub-routers
 const statsRoutes = require('./stats');

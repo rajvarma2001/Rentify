@@ -96,13 +96,10 @@ exports.getStats = async (req, res) => {
 
     } else {
       // Tenant view stats
-      // Find the lease of this tenant (linked via payments)
       const tenantPayments = await Payment.find({ tenant: userObjId })
         .populate('property');
       
-      const properties = tenantPayments.map(p => p.property).filter((p, index, self) =>
-        p && self.findIndex(t => t._id.toString() === p._id.toString()) === index
-      );
+      const properties = await Property.find({ assignedTenant: userObjId });
 
       // 2. Rent Due Summary for this tenant
       const duePayments = tenantPayments.filter(p => p.status === 'due' || p.status === 'overdue');

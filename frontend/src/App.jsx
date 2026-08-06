@@ -1,4 +1,5 @@
 import { useState, useEffect } from 'react'
+import axios from 'axios'
 import SplashScreen from './components/SplashScreen'
 import LandingPage from './components/LandingPage'
 import Login from './components/Login'
@@ -15,19 +16,27 @@ function App() {
   useEffect(() => {
     const savedUser = sessionStorage.getItem('rentify_user');
     if (savedUser) {
-      setUser(JSON.parse(savedUser));
+      const parsedUser = JSON.parse(savedUser);
+      setUser(parsedUser);
+      if (parsedUser.token) {
+        axios.defaults.headers.common['Authorization'] = `Bearer ${parsedUser.token}`;
+      }
     }
   }, []);
 
   const handleLogin = (userData) => {
     setUser(userData);
     sessionStorage.setItem('rentify_user', JSON.stringify(userData));
+    if (userData.token) {
+      axios.defaults.headers.common['Authorization'] = `Bearer ${userData.token}`;
+    }
     setCurrentPage('dashboard');
   };
 
   const handleLogout = () => {
     setUser(null);
     sessionStorage.removeItem('rentify_user');
+    delete axios.defaults.headers.common['Authorization'];
     setCurrentPage('landing');
   };
 

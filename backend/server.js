@@ -11,11 +11,14 @@ app.use(cors());
 app.use(express.json());
 
 const connectDB = require('./config/db');
+const startBillingScheduler = require('./utils/billingScheduler');
 
 // MongoDB connection
 connectDB().then(() => {
   // Seed initial demo data
   seedDatabase();
+  // Start monthly billing cron scheduler
+  startBillingScheduler();
 });
 
 const authRoutes = require('./routes/auth');

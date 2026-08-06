@@ -3,6 +3,7 @@ const User = require('../models/User');
 const Property = require('../models/Property');
 const Payment = require('../models/Payment');
 const Maintenance = require('../models/Maintenance');
+const Lease = require('../models/Lease');
 const bcrypt = require('bcryptjs');
 
 // GET all Tenants (role: tenant)
@@ -161,6 +162,9 @@ exports.deleteTenant = async (req, res) => {
 
     // Reset assigned properties to null
     await Property.updateMany({ assignedTenant: tenantId }, { $set: { assignedTenant: null } });
+
+    // Mark all leases associated with this tenant as Terminated
+    await Lease.updateMany({ tenant: tenantId }, { $set: { status: 'Terminated' } });
 
     res.json({ status: 'success', message: 'Tenant successfully deleted' });
   } catch (err) {
