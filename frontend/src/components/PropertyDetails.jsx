@@ -11,8 +11,8 @@ function PropertyDetails({ propertyId, user, onBackToList }) {
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState('');
   
-  // Tab states: 'rooms' | 'tenant' | 'rent' | 'maintenance' | 'documents'
-  const [activeTab, setActiveTab] = useState('rooms');
+  // Tab states: 'overview' | 'rooms' | 'tenant' | 'rent' | 'maintenance' | 'documents'
+  const [activeTab, setActiveTab] = useState('overview');
 
   // Interactive actions state
   const [tenantsList, setTenantsList] = useState([]);
@@ -307,6 +307,12 @@ function PropertyDetails({ propertyId, user, onBackToList }) {
           {/* Tab Navigation */}
           <div className="details-tabs-nav">
             <button 
+              className={`tab-nav-btn ${activeTab === 'overview' ? 'active' : ''}`}
+              onClick={() => setActiveTab('overview')}
+            >
+              🏠 Overview
+            </button>
+            <button 
               className={`tab-nav-btn ${activeTab === 'rooms' ? 'active' : ''}`}
               onClick={() => setActiveTab('rooms')}
             >
@@ -337,6 +343,81 @@ function PropertyDetails({ propertyId, user, onBackToList }) {
               📁 Documents
             </button>
           </div>
+
+          {/* TAB 0: Overview Summary */}
+          {activeTab === 'overview' && (
+            <div className="tab-pane-card overview-tab-pane animate-fade">
+              <h3>Property Overview Summary</h3>
+              <p className="tab-pane-desc">Core parameters, lease statuses, and financials at a glance.</p>
+              
+              <div className="overview-cards-container">
+                
+                {/* Card 1: Property Info Card */}
+                <div className="overview-sub-card info-summary">
+                  <div className="avatar-large">🏠</div>
+                  <h4>Property Metrics</h4>
+                  <div className="sidebar-info-row">
+                    <span className="label">Monthly Rate:</span>
+                    <span className="val">${property.rentAmount}/mo</span>
+                  </div>
+                  <div className="sidebar-info-row">
+                    <span className="label">Property Type:</span>
+                    <span className="val">{property.type}</span>
+                  </div>
+                  <div className="sidebar-info-row">
+                    <span className="label">Total Rooms:</span>
+                    <span className="val">{property.rooms ? property.rooms.length : 0} Unit(s)</span>
+                  </div>
+                </div>
+
+                {/* Card 2: Occupancy Status Card */}
+                <div className="overview-sub-card occupancy-card">
+                  <h4>👥 Occupancy & Tenant</h4>
+                  <div className="sidebar-info-row">
+                    <span className="label">Tenant Status:</span>
+                    <span className={`val ${property.assignedTenant ? 'active' : 'suspended'}`}>
+                      {property.assignedTenant ? 'Active Lease' : 'Vacant'}
+                    </span>
+                  </div>
+                  {property.assignedTenant ? (
+                    <>
+                      <div className="sidebar-info-row">
+                        <span className="label">Assigned Tenant:</span>
+                        <span className="val">{property.assignedTenant.name}</span>
+                      </div>
+                      <div className="sidebar-info-row">
+                        <span className="label">Tenant Email:</span>
+                        <span className="val">{property.assignedTenant.email}</span>
+                      </div>
+                    </>
+                  ) : (
+                    <div className="unlease-prompt">
+                      <p>No tenant is currently assigned to this property unit.</p>
+                    </div>
+                  )}
+                </div>
+
+                {/* Card 3: Financial Summary Card */}
+                <div className="overview-sub-card financial-card">
+                  <h4>💳 Invoice Statuses</h4>
+                  <div className="sidebar-info-row">
+                    <span className="label">Total Collected:</span>
+                    <span className="val green-val">${payments.filter(p => p.status === 'paid').reduce((a, c) => a + c.amount, 0)}</span>
+                  </div>
+                  <div className="sidebar-info-row">
+                    <span className="label">Total Outstanding:</span>
+                    <span className={`val ${payments.filter(p => p.status !== 'paid').reduce((a, c) => a + c.amount, 0) > 0 ? 'red-val' : 'green-val'}`}>
+                      ${payments.filter(p => p.status !== 'paid').reduce((a, c) => a + c.amount, 0)}
+                    </span>
+                  </div>
+                  <p className="sidebar-description" style={{ fontSize: '0.8rem', color: 'var(--text-secondary)', marginTop: '1rem', borderTop: '1px dashed var(--glass-border)', paddingTop: '0.75rem' }}>
+                    {property.description || 'No detailed specifications entered.'}
+                  </p>
+                </div>
+
+              </div>
+            </div>
+          )}
 
           {/* TAB 1: Rooms / Units */}
           {activeTab === 'rooms' && (
@@ -659,34 +740,6 @@ function PropertyDetails({ propertyId, user, onBackToList }) {
           )}
 
         </div>
-
-        {/* Sidebar Summary Card */}
-        <aside className="details-sidebar-content">
-          <div className="sidebar-overview-card">
-            <h3>Overview</h3>
-            <div className="sidebar-info-row">
-              <span className="label">Monthly Rate</span>
-              <span className="val">${property.rentAmount}/mo</span>
-            </div>
-            <div className="sidebar-info-row">
-              <span className="label">Property Type</span>
-              <span className="val">{property.type}</span>
-            </div>
-            <div className="sidebar-info-row">
-              <span className="label">Total Rooms</span>
-              <span className="val">{property.rooms ? property.rooms.length : 0} Unit(s)</span>
-            </div>
-            <div className="sidebar-info-row">
-              <span className="label">Tenant Status</span>
-              <span className={`val ${property.assignedTenant ? 'leased' : 'vacant'}`}>
-                {property.assignedTenant ? 'Active Lease' : 'Vacant'}
-              </span>
-            </div>
-            <p className="sidebar-description">
-              {property.description || 'No detailed specifications entered.'}
-            </p>
-          </div>
-        </aside>
 
         {/* Rooms Add/Edit Modal */}
         {showRoomModal && (

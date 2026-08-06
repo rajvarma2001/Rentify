@@ -2,7 +2,7 @@ import { useState, useEffect } from 'react'
 import axios from 'axios'
 import './TenantList.css'
 
-function TenantList({ onSelectTenant }) {
+function TenantList({ onSelectTenant, onOpenAssignWizard }) {
   const [tenants, setTenants] = useState([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState('');
@@ -155,9 +155,14 @@ function TenantList({ onSelectTenant }) {
     <div className="tenant-list-wrapper">
       <div className="list-header-row">
         <h2>👥 Leased Tenants ({tenants.length})</h2>
-        <button className="add-tenant-header-btn" onClick={handleOpenAdd}>
-          ➕ Add Tenant
-        </button>
+        <div style={{ display: 'flex', gap: '10px' }}>
+          <button className="add-tenant-header-btn" style={{ background: 'linear-gradient(135deg, #4f46e5, #6366f1)', boxShadow: '0 4px 15px rgba(79, 70, 229, 0.35)' }} onClick={() => onOpenAssignWizard()}>
+            🔗 Assign Tenant
+          </button>
+          <button className="add-tenant-header-btn" onClick={handleOpenAdd}>
+            ➕ Add Tenant
+          </button>
+        </div>
       </div>
 
       {error && <div className="error-alert max-width-1000">{error}</div>}
@@ -191,11 +196,17 @@ function TenantList({ onSelectTenant }) {
               </div>
 
               <div className="tenant-card-actions">
-                <button 
-                  className="action-view-btn" 
+                <button
+                  className="action-view-btn"
                   onClick={() => onSelectTenant(t._id)}
                 >
                   View Details
+                </button>
+                <button
+                  className="action-assign-btn"
+                  onClick={() => onOpenAssignWizard(t._id)}
+                >
+                  🔗 Assign Unit
                 </button>
                 <button className="action-edit-btn" onClick={() => handleOpenEdit(t)}>
                   Edit
@@ -220,9 +231,9 @@ function TenantList({ onSelectTenant }) {
               <h3>Register New Tenant</h3>
               <button className="close-modal-btn" onClick={() => setShowAddModal(false)}>×</button>
             </div>
-            
+
             {formError && <div className="error-alert">{formError}</div>}
-            
+
             <form onSubmit={handleAddSubmit} className="modal-form">
               <div className="form-group">
                 <label>Full Name *</label>
@@ -301,9 +312,9 @@ function TenantList({ onSelectTenant }) {
               <h3>Edit Tenant Profile</h3>
               <button className="close-modal-btn" onClick={() => setShowEditModal(false)}>×</button>
             </div>
-            
+
             {formError && <div className="error-alert">{formError}</div>}
-            
+
             <form onSubmit={handleEditSubmit} className="modal-form">
               <div className="form-group">
                 <label>Full Name *</label>

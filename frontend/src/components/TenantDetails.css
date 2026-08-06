@@ -72,17 +72,8 @@
 
 /* Details Grid Layout */
 .details-layout-grid {
-  display: grid;
-  grid-template-columns: 2fr 1fr;
-  gap: 2rem;
+  display: block;
   width: 100%;
-  align-items: flex-start;
-}
-
-@media (max-width: 900px) {
-  .details-layout-grid {
-    grid-template-columns: 1fr;
-  }
 }
 
 .details-main-content {
@@ -612,44 +603,90 @@
 .status-badge-tag.inprogress { color: #00b4d8; }
 .status-badge-tag.resolved { color: #52b788; }
 
-/* SIDEBAR SUMMARY PANELS */
-.details-sidebar-content {
+/* OVERVIEW TAB SUMMARY WIDGETS */
+.overview-cards-container {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(240px, 1fr));
+  gap: 1.5rem;
+  margin-top: 1rem;
+  width: 100%;
+}
+
+.overview-sub-card {
+  background: rgba(255, 255, 255, 0.015);
+  border: 1px solid var(--glass-border);
+  border-radius: 18px;
+  padding: 1.5rem;
   display: flex;
   flex-direction: column;
-  gap: 1.5rem;
+  justify-content: flex-start;
+  transition: all 0.3s;
 }
 
-.sidebar-overview-card {
-  background: var(--glass-bg);
-  backdrop-filter: blur(20px);
-  -webkit-backdrop-filter: blur(20px);
-  border: 1px solid var(--glass-border);
-  border-radius: 22px;
-  padding: 2rem;
-  box-shadow: 0 10px 45px rgba(0, 0, 0, 0.4);
-  text-align: left;
+.overview-sub-card:hover {
+  border-color: var(--glass-border-focus);
+  transform: translateY(-2px);
+  background: rgba(255, 255, 255, 0.03);
 }
 
-.sidebar-overview-card h3 {
-  font-size: 1.15rem;
+.overview-sub-card h4 {
+  font-size: 1.1rem;
   font-weight: 800;
   color: #ffffff;
   margin-top: 0;
-  margin-bottom: 1.35rem;
+  margin-bottom: 1.25rem;
   border-bottom: 1px solid var(--glass-border);
   padding-bottom: 0.75rem;
+}
+
+/* Profile summary details */
+.overview-sub-card.profile-summary {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  text-align: center;
+  padding: 2.25rem 1.75rem;
+}
+
+.overview-sub-card.profile-summary h4 {
+  border-bottom: none;
+  padding-bottom: 0;
+  margin-bottom: 0.5rem;
+  font-size: 1.25rem;
+}
+
+.avatar-large {
+  font-size: 3rem;
+  background: rgba(162, 89, 255, 0.08);
+  border: 1px solid rgba(162, 89, 255, 0.15);
+  width: 80px;
+  height: 80px;
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  margin-bottom: 1.25rem;
+  box-shadow: 0 8px 24px rgba(162, 89, 255, 0.15);
+}
+
+.joined-meta {
+  font-size: 0.8rem;
+  color: var(--text-secondary);
+  margin-top: 1rem;
+  margin-bottom: 0;
 }
 
 .sidebar-info-row {
   display: flex;
   justify-content: space-between;
   align-items: center;
-  margin-bottom: 0.85rem;
-  font-size: 0.85rem;
+  margin-bottom: 0.95rem;
+  font-size: 0.9rem;
 }
 
 .sidebar-info-row .label {
   color: var(--text-secondary);
+  font-weight: 500;
 }
 
 .sidebar-info-row .val {
@@ -659,7 +696,96 @@
 
 .sidebar-info-row .val.status-lbl.active { color: #52b788; }
 .sidebar-info-row .val.status-lbl.suspended { color: #ff6b6b; }
-.red-val { color: #ff5252 !important; }
+
+.green-val {
+  color: #52b788 !important;
+}
+
+.red-val {
+  color: #ff5252 !important;
+}
+
+.unpaid-alert-badge {
+  background: rgba(239, 68, 68, 0.08);
+  color: #f87171;
+  border: 1px solid rgba(239, 68, 68, 0.2);
+  border-radius: 10px;
+  padding: 0.65rem;
+  text-align: center;
+  font-weight: 700;
+  font-size: 0.85rem;
+  margin-top: 1.25rem;
+}
+
+.unpaid-alert-badge.success {
+  background: rgba(16, 185, 129, 0.08);
+  color: #34d399;
+  border-color: rgba(16, 185, 129, 0.2);
+}
+
+/* Lease term progress bar styling */
+.lease-progress-section {
+  border-top: 1px dashed var(--glass-border);
+  margin-top: 1.25rem;
+  padding-top: 1.25rem;
+}
+
+.progress-labels {
+  display: flex;
+  justify-content: space-between;
+  font-size: 0.75rem;
+  margin-bottom: 0.5rem;
+}
+
+.progress-label-lbl {
+  color: var(--text-secondary);
+  font-weight: 600;
+}
+
+.progress-percent-lbl {
+  color: #818cf8;
+  font-weight: 700;
+}
+
+.lease-progress-bar-container {
+  width: 100%;
+  height: 8px;
+  background: rgba(255, 255, 255, 0.05);
+  border-radius: 4px;
+  overflow: hidden;
+  margin-bottom: 0.5rem;
+  border: 1px solid rgba(255, 255, 255, 0.02);
+}
+
+.lease-progress-bar-fill {
+  height: 100%;
+  background: linear-gradient(90deg, #4f46e5, #818cf8);
+  border-radius: 4px;
+  box-shadow: 0 0 8px rgba(79, 70, 229, 0.5);
+}
+
+.date-labels {
+  display: flex;
+  justify-content: space-between;
+  font-size: 0.7rem;
+  color: var(--text-secondary);
+  font-weight: 500;
+}
+
+.unlease-prompt {
+  padding: 1rem;
+  background: rgba(255, 255, 255, 0.02);
+  border-radius: 10px;
+  border: 1px dashed var(--glass-border);
+  text-align: center;
+}
+
+.unlease-prompt p {
+  font-size: 0.85rem;
+  color: var(--text-secondary);
+  margin: 0;
+  font-style: italic;
+}
 
 /* Loading state */
 .details-loading-box,

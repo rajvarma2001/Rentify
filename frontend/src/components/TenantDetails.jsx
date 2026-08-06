@@ -13,8 +13,8 @@ function TenantDetails({ tenantId, user, onBackToList }) {
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState('');
   
-  // Tab states: 'info' | 'property' | 'rent' | 'documents' | 'maintenance'
-  const [activeTab, setActiveTab] = useState('info');
+  // Tab states: 'overview' | 'info' | 'property' | 'rent' | 'documents' | 'maintenance'
+  const [activeTab, setActiveTab] = useState('overview');
 
   // Landlord Actions State
   const [propertiesList, setPropertiesList] = useState([]);
@@ -234,6 +234,12 @@ function TenantDetails({ tenantId, user, onBackToList }) {
           {/* Tab Navigation */}
           <div className="details-tabs-nav">
             <button 
+              className={`tab-nav-btn ${activeTab === 'overview' ? 'active' : ''}`}
+              onClick={() => setActiveTab('overview')}
+            >
+              🏠 Overview
+            </button>
+            <button 
               className={`tab-nav-btn ${activeTab === 'info' ? 'active' : ''}`}
               onClick={() => setActiveTab('info')}
             >
@@ -264,6 +270,107 @@ function TenantDetails({ tenantId, user, onBackToList }) {
               🛠️ Requests ({maintenance.length})
             </button>
           </div>
+
+          {/* TAB 0: Overview Summary */}
+          {activeTab === 'overview' && (
+            <div className="tab-pane-card overview-tab-pane animate-fade">
+              <h3>Tenant Overview Summary</h3>
+              <p className="tab-pane-desc">Core parameters, financial status, and lease coverage at a glance.</p>
+              
+              <div className="overview-cards-container">
+                
+                {/* Card 1: Profile Summary */}
+                <div className="overview-sub-card profile-summary">
+                  <div className="avatar-large">👤</div>
+                  <h4>{tenant.name}</h4>
+                  <span className={`status-badge-lbl ${tenant.status.toLowerCase()}`}>
+                    {tenant.status}
+                  </span>
+                  <p className="joined-meta">Member since {new Date(tenant.createdAt).toLocaleDateString()}</p>
+                </div>
+
+                {/* Card 2: Financial Summary */}
+                <div className="overview-sub-card financial-card">
+                  <h4>💳 Financial Status</h4>
+                  <div className="sidebar-info-row">
+                    <span className="label">Total Rent Paid</span>
+                    <span className="val green-val">${payments.filter(p => p.status === 'paid').reduce((a, c) => a + c.amount, 0)}</span>
+                  </div>
+                  <div className="sidebar-info-row">
+                    <span className="label">Outstanding Dues</span>
+                    <span className={`val ${payments.filter(p => p.status !== 'paid').reduce((a, c) => a + c.amount, 0) > 0 ? 'red-val' : 'green-val'}`}>
+                      ${payments.filter(p => p.status !== 'paid').reduce((a, c) => a + c.amount, 0)}
+                    </span>
+                  </div>
+                  {payments.filter(p => p.status !== 'paid').length > 0 ? (
+                    <div className="unpaid-alert-badge">
+                      ⚠️ {payments.filter(p => p.status !== 'paid').length} Outstanding Invoices
+                    </div>
+                  ) : (
+                    <div className="unpaid-alert-badge success">
+                      ✓ Account is in good standing
+                    </div>
+                  )}
+                </div>
+
+                {/* Card 3: Active Lease Coverage */}
+                <div className="overview-sub-card lease-timeline-card">
+                  <h4>📜 Lease Coverage</h4>
+                  <div className="sidebar-info-row">
+                    <span className="label">Assigned Suite</span>
+                    <span className="val">{property ? property.name : 'No Active Lease'}</span>
+                  </div>
+                  {property ? (
+                    <>
+                      <div className="sidebar-info-row">
+                        <span className="label">Monthly Rent</span>
+                        <span className="val">${property.rentAmount}/mo</span>
+                      </div>
+                      <div className="lease-progress-section">
+                        <div className="progress-labels">
+                          <span className="progress-label-lbl">Term Progress</span>
+                          <span className="progress-percent-lbl">
+                            {(() => {
+                              const start = new Date(property.leaseStart).getTime();
+                              const end = new Date(property.leaseEnd).getTime();
+                              const now = Date.now();
+                              if (now < start) return '0%';
+                              if (now > end) return '100%';
+                              return `${Math.round(((now - start) / (end - start)) * 100)}%`;
+                            })()}
+                          </span>
+                        </div>
+                        <div className="lease-progress-bar-container">
+                          <div 
+                            className="lease-progress-bar-fill" 
+                            style={{ 
+                              width: (() => {
+                                const start = new Date(property.leaseStart).getTime();
+                                const end = new Date(property.leaseEnd).getTime();
+                                const now = Date.now();
+                                if (now < start) return '0%';
+                                if (now > end) return '100%';
+                                return `${Math.round(((now - start) / (end - start)) * 100)}%`;
+                              })()
+                            }}
+                          ></div>
+                        </div>
+                        <div className="date-labels">
+                          <span>{new Date(property.leaseStart).toLocaleDateString()}</span>
+                          <span>{new Date(property.leaseEnd).toLocaleDateString()}</span>
+                        </div>
+                      </div>
+                    </>
+                  ) : (
+                    <div className="unlease-prompt">
+                      <p>No active rental agreement is currently linked to this tenant account.</p>
+                    </div>
+                  )}
+                </div>
+
+              </div>
+            </div>
+          )}
 
           {/* TAB 1: Personal Info */}
           {activeTab === 'info' && (
@@ -529,27 +636,6 @@ function TenantDetails({ tenantId, user, onBackToList }) {
           )}
 
         </div>
-
-        {/* Sidebar overview pane */}
-        <aside className="details-sidebar-content">
-          <div className="sidebar-overview-card">
-            <h3>Overview</h3>
-            <div className="sidebar-info-row">
-              <span className="label">Status</span>
-              <span className={`val status-lbl ${tenant.status.toLowerCase()}`}>{tenant.status}</span>
-            </div>
-            <div className="sidebar-info-row">
-              <span className="label">Assigned Suite</span>
-              <span className="val">{property ? property.name : 'No Active Lease'}</span>
-            </div>
-            <div className="sidebar-info-row">
-              <span className="label">Total Dues</span>
-              <span className="val red-val">
-                ${payments.filter(p => p.status !== 'paid').reduce((a, c) => a + c.amount, 0)}
-              </span>
-            </div>
-          </div>
-        </aside>
 
       </div>
 

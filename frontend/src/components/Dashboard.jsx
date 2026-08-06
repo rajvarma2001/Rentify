@@ -15,6 +15,7 @@ import MaintenanceDetails from './MaintenanceDetails'
 import ReportDashboard from './ReportDashboard'
 import NotificationCenter from './NotificationCenter'
 import Profile from './Profile'
+import AssignTenantWizard from './AssignTenantWizard'
 import './Dashboard.css'
 
 function Dashboard({ user, onLogout }) {
@@ -27,6 +28,15 @@ function Dashboard({ user, onLogout }) {
   const [selectedPaymentId, setSelectedPaymentId] = useState(null);
   const [selectedExpenseId, setSelectedExpenseId] = useState(null);
   const [selectedRequestId, setSelectedRequestId] = useState(null);
+
+  // Wizard States
+  const [showAssignWizard, setShowAssignWizard] = useState(false);
+  const [wizardTenantId, setWizardTenantId] = useState(null);
+
+  const handleOpenAssignWizard = (tenantId = null) => {
+    setWizardTenantId(tenantId);
+    setShowAssignWizard(true);
+  };
 
   // Stats State
   const [stats, setStats] = useState({
@@ -424,6 +434,9 @@ function Dashboard({ user, onLogout }) {
                 <div className="card-content actions-grid">
                   {user.role === 'landlord' ? (
                     <>
+                      <button className="action-btn animate-btn highlighted" onClick={() => handleOpenAssignWizard()}>
+                        🔗 Assign Tenant Wizard
+                      </button>
                       <button className="action-btn animate-btn" onClick={() => setActiveSubTab('properties')}>
                         🏢 Manage Properties list
                       </button>
@@ -497,6 +510,7 @@ function Dashboard({ user, onLogout }) {
               ) : (
                 <TenantList 
                   onSelectTenant={setSelectedTenantId}
+                  onOpenAssignWizard={handleOpenAssignWizard}
                 />
               )}
             </main>
@@ -514,6 +528,7 @@ function Dashboard({ user, onLogout }) {
                 <LeaseList 
                   user={user}
                   onSelectLease={setSelectedLeaseId}
+                  onOpenAssignWizard={handleOpenAssignWizard}
                 />
               )}
             </main>
@@ -671,6 +686,15 @@ function Dashboard({ user, onLogout }) {
           </div>
         </div>
       )}
+
+      {/* Assign Tenant Wizard Modal */}
+      <AssignTenantWizard 
+        isOpen={showAssignWizard} 
+        onClose={() => { setShowAssignWizard(false); setWizardTenantId(null); }}
+        initialTenantId={wizardTenantId}
+        properties={stats.properties}
+        onRefresh={fetchStats}
+      />
 
     </div>
   )

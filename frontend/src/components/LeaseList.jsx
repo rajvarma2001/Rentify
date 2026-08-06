@@ -2,7 +2,7 @@ import { useState, useEffect } from 'react'
 import axios from 'axios'
 import './LeaseList.css'
 
-function LeaseList({ user, onSelectLease }) {
+function LeaseList({ user, onSelectLease, onOpenAssignWizard }) {
   const [leases, setLeases] = useState([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState('');
@@ -220,9 +220,14 @@ function LeaseList({ user, onSelectLease }) {
     <div className="lease-list-wrapper">
       <div className="list-header-row">
         <h2>📝 Rental Leases ({leases.length})</h2>
-        <button className="add-lease-header-btn" onClick={handleOpenAdd}>
-          ➕ Create Lease
-        </button>
+        <div style={{ display: 'flex', gap: '10px' }}>
+          <button className="add-lease-header-btn" style={{ background: 'linear-gradient(135deg, #4f46e5, #6366f1)', boxShadow: '0 4px 15px rgba(79, 70, 229, 0.35)' }} onClick={() => onOpenAssignWizard()}>
+            🔗 Assign Tenant Wizard
+          </button>
+          <button className="add-lease-header-btn" onClick={handleOpenAdd}>
+            ➕ Create Lease
+          </button>
+        </div>
       </div>
 
       {error && <div className="error-alert max-width-1000">{error}</div>}

@@ -138,8 +138,17 @@
   width: fit-content;
 }
 
-.status-badge-lbl.active { background: rgba(56, 176, 0, 0.08); color: #52b788; border: 1px solid rgba(56, 176, 0, 0.2); }
-.status-badge-lbl.suspended { background: rgba(230, 57, 70, 0.08); color: #ff6b6b; border: 1px solid rgba(230, 57, 70, 0.2); }
+.status-badge-lbl.active {
+  background: rgba(56, 176, 0, 0.08);
+  color: #52b788;
+  border: 1px solid rgba(56, 176, 0, 0.2);
+}
+
+.status-badge-lbl.suspended {
+  background: rgba(230, 57, 70, 0.08);
+  color: #ff6b6b;
+  border: 1px solid rgba(230, 57, 70, 0.2);
+}
 
 .tenant-card-body {
   flex-grow: 1;
@@ -261,7 +270,7 @@
     align-items: stretch;
     gap: 1.25rem;
   }
-  
+
   .tenant-card-header {
     flex-direction: row;
     justify-content: space-between;
@@ -272,26 +281,26 @@
     padding-bottom: 1rem;
     text-align: left;
   }
-  
+
   .tenant-card-body {
     flex-direction: column;
     align-items: stretch;
     gap: 1.25rem;
   }
-  
+
   .tenant-details-contact {
     border-left: none;
     border-top: 1px dashed rgba(255, 255, 255, 0.08);
     padding-left: 0;
     padding-top: 1rem;
   }
-  
+
   .tenant-card-actions {
     width: 100%;
     flex-direction: row;
     gap: 0.5rem;
   }
-  
+
   .tenant-card-actions button {
     flex: 1;
     width: auto;
@@ -304,13 +313,37 @@
     align-items: flex-start;
     gap: 1rem;
   }
+
   .add-tenant-header-btn {
     width: 100%;
   }
+
   .tenant-card-actions {
     flex-direction: column;
   }
+
   .tenant-card-actions button {
     width: 100%;
   }
+}
+
+.action-assign-btn {
+  width: 100%;
+  background: rgba(79, 70, 229, 0.08);
+  border: 1px solid rgba(79, 70, 229, 0.25);
+  color: #c7d2fe;
+  border-radius: 10px;
+  padding: 0.6rem 0.85rem;
+  font-weight: 600;
+  font-size: 0.8rem;
+  cursor: pointer;
+  transition: all 0.25s;
+  text-align: center;
+}
+
+.action-assign-btn:hover {
+  background: rgba(79, 70, 229, 0.2);
+  color: #ffffff;
+  border-color: #6366f1;
+  transform: translateY(-2px);
 }
