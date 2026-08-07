@@ -38,6 +38,41 @@ A dedicated dashboard for tenants to view outstanding rent balances, settle bill
 
 ---
 
+## 📌 Project Scope
+
+This project was built as a portfolio demonstration of a modern MERN Stack Rent Management System. It showcases complete business workflows, role-based access control, dashboard analytics, and property management features.
+
+### ✅ Implemented Features
+
+- Role-based authentication (Landlord & Tenant)
+- Property and Unit Management
+- Tenant Assignment & Lease Management
+- Automatic Monthly Invoice Generation
+- Expense Tracking
+- Maintenance Request Management
+- Dashboard Analytics & Reports
+- Notification Center
+- Profile & Account Management
+- JWT Authentication & Password Hashing
+- Responsive Glassmorphic UI
+
+### 🚧 Future Production Enhancements
+
+The following features can be added to transform this project into a production-ready SaaS application:
+
+- Real Payment Gateway Integration (Stripe/Razorpay)
+- Email Verification & Password Recovery
+- Two-Factor Authentication (2FA)
+- SMS & Email Notifications
+- Refresh Token Authentication
+- Audit Logs & Activity History
+- Advanced Role & Permission Management
+- API Rate Limiting & Security Hardening
+- Cloud File Storage
+- Multi-Tenant Architecture
+- Monitoring, Logging & Automated Backups
+- ---
+
 ## ⏳ Background Operations
 Rentify comes with an integrated automated billing scheduler:
 *   **Cron Job**: Runs automatically at **00:00 on the 1st of every month** (via `node-cron`).
@@ -83,3 +118,9 @@ Rentify comes with an integrated automated billing scheduler:
    npm run dev
    ```
 4. Open the application in your browser at `http://localhost:5173`.
+
+ ## 📄 Disclaimer
+
+This application was developed for educational and portfolio purposes to demonstrate full-stack MERN development and real-world business workflows.
+
+While the application includes secure authentication using JWT and bcrypt, some enterprise-level features—such as real payment gateway integration, advanced security hardening, infrastructure monitoring, and compliance requirements—are intentionally outside the scope of this project and can be implemented for a production deployment.
